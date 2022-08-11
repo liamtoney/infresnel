@@ -1,0 +1,8 @@
+name: infresnel
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pip
+  - pygmt
+  - rioxarray
