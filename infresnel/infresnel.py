@@ -76,20 +76,19 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
     rec_lats = np.atleast_1d(rec_lat)
     rec_lons = np.atleast_1d(rec_lon)
 
-    # Compute region based on provided source-receiver geometry (TODO: add buffer here?)
-    region = [
-        np.min([src_lon, rec_lons.min()]),  # xmin
-        np.max([src_lon, rec_lons.max()]),  # xmax
-        np.min([src_lat, rec_lats.min()]),  # ymin
-        np.max([src_lat, rec_lats.max()]),  # ymax
-    ]
-
     print('Loading and projecting DEM...')
     if dem_file is not None:
         # Load user-provided DEM (TODO: check that this file exists)
         dem = xr.open_dataarray(dem_file)
     else:
-        # Get SRTM data using PyGMT (have to manually write the CRS for these files)
+        # Get SRTM data using PyGMT (have to manually write the CRS for these files),
+        # computing region based on provided source-receiver geometry (TODO: add buffer here?)
+        region = [
+            np.min([src_lon, rec_lons.min()]),  # xmin
+            np.max([src_lon, rec_lons.max()]),  # xmax
+            np.min([src_lat, rec_lats.min()]),  # ymin
+            np.max([src_lat, rec_lats.max()]),  # ymax
+        ]
         dem = load_earth_relief(resolution='01s', region=region, use_srtm=True)
         dem.rio.write_crs(dem.horizontal_datum, inplace=True)
 
