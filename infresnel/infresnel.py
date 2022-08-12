@@ -51,7 +51,11 @@ def _shortest_diffracted_path(d, z):
 
 
 def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
-    """TODO: Fill in info here
+    """Calculate elevation profiles, direct paths, and shortest diffracted paths.
+
+    Paths are calculated for a given DEM (either a user-supplied `dem_file` or
+    automatically downloaded 1 arc-second SRTM data) and an arbitrary number of
+    source-receiver pairs.
 
     Note:
         Coordinates are expected to be in the WGS 84 datum.
@@ -63,8 +67,7 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
             latitudes
         rec_lon (int, float, list, tuple, or numpy.ndarray): One or more receiver
             longitudes
-        dem_file (str or None): Path to DEM file (if `None`, then 1 arc-second SRTM data
-            are used)
+        dem_file (str or None): Path to DEM file (if `None`, then SRTM data are used)
 
     Returns:
         list: List of xarray.Dataset objects, one per source-receiver pair, containing
