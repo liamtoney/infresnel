@@ -62,7 +62,7 @@ def calculate_paths(
     (lengths, coordinates, etc.) and the DEM used are returned.
 
     Note:
-        Coordinates are expected to be in the WGS 84 datum.
+        Input coordinates are expected to be in the WGS 84 datum.
 
     Args:
         src_lat (int or float): Source latitude
