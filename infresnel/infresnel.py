@@ -114,17 +114,17 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
     src_x, src_y = proj.transform(src_lat, src_lon)
     rec_xs, rec_ys = proj.transform(rec_lats, rec_lons)
 
-    # Iterate over all receivers (= source-receiver pairs), computing elevation profiles
-    profiles = []
+    # Iterate over all receivers (= source-receiver pairs), calculating paths
+    ds_list = []
     counter = 0
-    print(f'Computing {rec_lats.size} DEM profiles...')
+    print(f'Computing {rec_lats.size} paths...')
     for rec_x, rec_y in zip(rec_xs, rec_ys):
 
         # Determine # of points in profile
         dist = np.linalg.norm([src_x - rec_x, src_y - rec_y])
         n = int(np.ceil(dist / target_spacing))
 
-        # Make profile, clean up, and add to list
+        # Make profile and clean up
         profile = dem_utm.interp(
             x=xr.DataArray(np.linspace(src_x, rec_x, n)),
             y=xr.DataArray(np.linspace(src_y, rec_y, n)),
@@ -132,29 +132,14 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
         )
         profile = profile.assign_coords(dim_0=_horizontal_distance(profile))
         profile = profile.rename(dim_0='distance')
-        profiles.append(profile)
-
-        # Print progress
-        counter += 1
-        print('{:.1f}%'.format((counter / rec_lats.size) * 100), end='\r')
-
-    print('Done')
-
-    # Iterate over all profiles, calculating paths
-    ds_list = []
-    for profile in profiles:
-
-        # Ensure numpy.ndarray type for function input
-        d = profile.distance.values
-        z = profile.values
 
         # Compute DIRECT path
-        direct_path = _direct_path(d, z)
-        direct_path_len = _path_length(d, direct_path)
+        direct_path = _direct_path(profile.distance.values, profile.values)
+        direct_path_len = _path_length(profile.distance.values, direct_path)
 
         # Compute SHORTEST DIFFRACTED path
-        diff_path = _shortest_diffracted_path(d, z)
-        diff_path_len = _path_length(d, diff_path)
+        diff_path = _shortest_diffracted_path(profile.distance.values, profile.values)
+        diff_path_len = _path_length(profile.distance.values, diff_path)
 
         # Make nice Dataset of all info
         ds = xr.Dataset(
@@ -168,5 +153,11 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
             ),
         )
         ds_list.append(ds)
+
+        # Print progress
+        counter += 1
+        print('{:.1f}%'.format((counter / rec_lats.size) * 100), end='\r')
+
+    print('Done')
 
     return ds_list
