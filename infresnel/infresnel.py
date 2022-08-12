@@ -65,7 +65,8 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
             are used)
 
     Returns:
-        TODO: Decide on output type etc.
+        list: List of xarray.Dataset objects, one per source-receiver pair, containing
+        elevation profiles and calculated paths with lengths
     """
 
     # Type checks
