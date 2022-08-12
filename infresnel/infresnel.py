@@ -84,6 +84,7 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
         np.max([src_lat, rec_lats.max()]),  # ymax
     ]
 
+    print('Loading and projecting DEM...')
     if dem_file is not None:
         # Load user-provided DEM (TODO: check that this file exists)
         dem = xr.open_dataarray(dem_file)
@@ -99,13 +100,15 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
     # Project DEM to UTM
     utm_crs = CRS(dem.rio.estimate_utm_crs(datum_name='WGS 84'))
     dem_utm = dem.rio.reproject(utm_crs).drop('spatial_ref')
+    print('Done\n')
 
     # Determine target spacing of interpolated profiles from DEM spacing - does not seem to
     # slow down code much if this is decreased
     mean_resolution = np.abs(dem_utm.rio.resolution()).mean()
-    print(f'DEM spacing: {mean_resolution:.2f} m')
     target_spacing = mean_resolution / 2  # [m]
-    print(f'-> elevation profile spacing: {target_spacing:.2f} m\n')
+    print(
+        f'DEM spacing = {mean_resolution:.2f} m -> profile spacing = {target_spacing:.2f} m\n'
+    )
 
     # Get UTM coords for source and receivers
     proj = Transformer.from_crs(utm_crs.geodetic_crs, utm_crs)
@@ -114,9 +117,8 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
 
     # Iterate over all receivers (= source-receiver pairs), computing elevation profiles
     profiles = []
-    total_its = rec_lats.size
     counter = 0
-    print('Computing DEM profiles...')
+    print(f'Computing {rec_lats.size} DEM profiles...')
     for rec_x, rec_y in zip(rec_xs, rec_ys):
 
         # Determine # of points in profile
@@ -135,7 +137,7 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
 
         # Print progress
         counter += 1
-        print('{:.1f}%'.format((counter / total_its) * 100), end='\r')
+        print('{:.1f}%'.format((counter / rec_lats.size) * 100), end='\r')
 
     print('Done')
 
