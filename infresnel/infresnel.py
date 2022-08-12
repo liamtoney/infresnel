@@ -52,7 +52,7 @@ def _shortest_diffracted_path(d, z):
     return np.hstack([path_left[:-1], path_right])
 
 
-def calculate_paths(src_lat, src_lon, rec_lat, rec_lon):
+def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
     """TODO: Fill in info here
 
     Note:
@@ -65,6 +65,8 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon):
             latitudes
         rec_lon (int, float, list, tuple, or numpy.ndarray): One or more receiver
             longitudes
+        dem_file (str or None): Path to DEM file (if `None`, then 1 arc-second SRTM data
+            are used)
 
     Returns:
         TODO: Decide on output type etc.
@@ -86,9 +88,13 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon):
         np.max([src_lat, rec_lats.max()]),  # ymax
     ]
 
-    # Get DEM using PyGMT (using highest resolution here)
-    dem = load_earth_relief(resolution='01s', region=region, use_srtm=True)
-    dem.rio.write_crs(dem.horizontal_datum, inplace=True)
+    if dem_file is not None:
+        # Load user-provided DEM (TODO: check that this file exists)
+        dem = xr.open_dataarray(dem_file)
+    else:
+        # Get SRTM data using PyGMT (have to manually write the CRS for these files)
+        dem = load_earth_relief(resolution='01s', region=region, use_srtm=True)
+        dem.rio.write_crs(dem.horizontal_datum, inplace=True)
 
     # Clean DEM before going further
     dem = dem.squeeze(drop=True).rename('elevation')
