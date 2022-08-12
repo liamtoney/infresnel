@@ -2,12 +2,25 @@
 
 *infresnel* is a Python package which facilitates computation of the
 [Fresnel number](https://en.wikipedia.org/wiki/Fresnel_number) for
-[infrasound](https://en.wikipedia.org/wiki/Infrasound) applications.
+[infrasound](https://en.wikipedia.org/wiki/Infrasound) applications — specifically,
+propagation over topography at local to regional scales.
 
-The dimensionless Fresnel number $N$ for wavelength $\lambda$ is given by
-$$N = \frac{(R_\mathrm{t} - R_\mathrm{d})}{\lambda / 2},$$ where $R_\mathrm{t}$ is the
-length of the shortest diffracted path, and $R_\mathrm{d}$ the length of the direct
-path, from source to receiver (Maher et al., 2021).
+## Background and motivation
+
+The dimensionless Fresnel number $N$ for an acoustic wave with wavelength $\lambda$ is
+given by $$N = \frac{(R_\mathrm{f} - R_\mathrm{d})}{\lambda / 2},$$ where $R_\mathrm{f}$
+is the length of the shortest diffracted path over topography, and $R_\mathrm{d}$ the
+length of the direct path (i.e., line-of-sight slant distance), from source to receiver
+(Maher et al., 2021). In words, the Fresnel number is the extra distance a wave must
+travel due to topography, normalized by half a wavelength. The path length difference
+$(R_\mathrm{f} - R_\mathrm{d})$ can additionaly be used to estimate travel time delays
+due to diffraction over topography. The travel time delay $\delta_\mathrm{f}$ is given
+by $$\delta_\mathrm{f} = \frac{(R_\mathrm{f} - R_\mathrm{d})}{c},$$ where $c$ is the
+estimated acoustic wavespeed assuming a homogenous atmosphere.
+
+These are simple equations, but the practical computation of the quantity
+$(R_\mathrm{f} - R_\mathrm{d})$ is somewhat involved. The goal of *infresnel* is to make
+this computation as quick and convenient as possible.
 
 ## Quickstart
 
