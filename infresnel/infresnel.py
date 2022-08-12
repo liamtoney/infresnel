@@ -3,10 +3,6 @@ import xarray as xr
 from pygmt.datasets import load_earth_relief
 from pyproj import CRS, Transformer
 
-# [m] Target horizontal spacing for profile (determines # points) - does not seem to
-# slow down code much if this is decreased
-TARGET_SPACING = 10
-
 
 # Helper function to calculate horizontal difference vector for a profile DataArray
 def _horizontal_distance(profile):
@@ -104,6 +100,13 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
     utm_crs = CRS(dem.rio.estimate_utm_crs(datum_name='WGS 84'))
     dem_utm = dem.rio.reproject(utm_crs).drop('spatial_ref')
 
+    # Determine target spacing of interpolated profiles from DEM spacing - does not seem to
+    # slow down code much if this is decreased
+    mean_resolution = np.abs(dem_utm.rio.resolution()).mean()
+    print(f'DEM spacing: {mean_resolution:.2f} m')
+    target_spacing = mean_resolution / 2  # [m]
+    print(f'-> elevation profile spacing: {target_spacing:.2f} m\n')
+
     # Get UTM coords for source and receivers
     proj = Transformer.from_crs(utm_crs.geodetic_crs, utm_crs)
     src_x, src_y = proj.transform(src_lat, src_lon)
@@ -118,7 +121,7 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
 
         # Determine # of points in profile
         dist = np.linalg.norm([src_x - rec_x, src_y - rec_y])
-        n = int(np.ceil(dist / TARGET_SPACING))
+        n = int(np.ceil(dist / target_spacing))
 
         # Make profile, clean up, and add to list
         profile = dem_utm.interp(
