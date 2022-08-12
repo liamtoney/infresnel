@@ -181,6 +181,6 @@ def calculate_paths(
 
     # Determine what to output
     if full_output:
-        return (ds_list, dem_utm)
+        return ds_list, dem_utm
     else:
         return np.array([ds.path_length_difference for ds in ds_list])
