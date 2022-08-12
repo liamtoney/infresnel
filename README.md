@@ -13,7 +13,7 @@ is the length of the shortest diffracted path over topography, and $R_\mathrm{d}
 length of the direct path (i.e., line-of-sight slant distance), from source to receiver
 (Maher et al., 2021). In words, the Fresnel number is the extra distance a wave must
 travel due to topography, normalized by half a wavelength. The path length difference
-$(R_\mathrm{f} - R_\mathrm{d})$ can additionaly be used to estimate travel time delays
+$(R_\mathrm{f} - R_\mathrm{d})$ can additionally be used to estimate travel time delays
 due to diffraction over topography. The travel time delay $\delta_\mathrm{f}$ is given
 by $$\delta_\mathrm{f} = \frac{(R_\mathrm{f} - R_\mathrm{d})}{c},$$ where $c$ is the
 estimated acoustic wavespeed assuming a homogenous atmosphere.
