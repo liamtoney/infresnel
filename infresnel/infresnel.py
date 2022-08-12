@@ -90,9 +90,13 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon):
     dem = load_earth_relief(resolution='01s', region=region, use_srtm=True)
     dem.rio.write_crs(dem.horizontal_datum, inplace=True)
 
+    # Clean DEM before going further
+    dem = dem.squeeze(drop=True).rename('elevation')
+    dem.attrs = {}
+
     # Project DEM to UTM
     utm_crs = CRS(dem.rio.estimate_utm_crs(datum_name='WGS 84'))
-    dem_utm = dem.rio.reproject(utm_crs)
+    dem_utm = dem.rio.reproject(utm_crs).drop('spatial_ref')
 
     # Get UTM coords for source and receivers
     proj = Transformer.from_crs(utm_crs.geodetic_crs, utm_crs)
@@ -116,12 +120,8 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon):
             y=xr.DataArray(np.linspace(src_y, rec_y, n)),
             method='linear',
         )
-
-        # TODO: Are dim_0 and spatial_ref just GMT DEM things, or are they generic?
         profile = profile.assign_coords(dim_0=_horizontal_distance(profile))
-        profile = profile.rename(dim_0='distance').drop('spatial_ref')
-        profile.attrs = {}
-
+        profile = profile.rename(dim_0='distance')
         profiles.append(profile)
 
         # Print progress
