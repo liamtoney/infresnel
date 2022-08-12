@@ -4,7 +4,7 @@ from pygmt.datasets import load_earth_relief
 from pyproj import CRS, Transformer
 
 
-# Helper function to calculate horizontal difference vector for a profile DataArray
+# Helper function to calculate horizontal distance vector for a profile DataArray
 def _horizontal_distance(profile):
     return np.hstack(
         [0, np.cumsum(np.linalg.norm([np.diff(profile.x), np.diff(profile.y)], axis=0))]
