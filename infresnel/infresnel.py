@@ -35,8 +35,8 @@ def calculate_paths(
         rec_lon (int, float, list, tuple, or numpy.ndarray): One or more receiver
             longitudes
         dem_file (str or None): Path to DEM file (if `None`, then SRTM data are used)
-        full_output (bool): Toggle outputring full profile and path information and DEM,
-            vs. just the path length differences
+        full_output (bool): Toggle outputting full profile/path information and DEM, vs.
+            just the path length differences
 
     Returns:
         If `full_output` is `False` — a numpy.ndarray of path length differences [m],
