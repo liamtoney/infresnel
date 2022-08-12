@@ -3,6 +3,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+#  - matplotlib  # OPTIONAL, for plotting
   - pip
   - pygmt
   - rioxarray
