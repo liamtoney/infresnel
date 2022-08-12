@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 import xarray as xr
 from pygmt.datasets import load_earth_relief
@@ -79,7 +81,9 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
 
     print('Loading and projecting DEM...')
     if dem_file is not None:
-        # Load user-provided DEM (TODO: check that this file exists)
+        # Load user-provided DEM, first checking if it exists
+        dem_file = Path(str(dem_file)).expanduser().resolve()
+        assert dem_file.exists(), 'dem_file does not exist!'
         dem = xr.open_dataarray(dem_file)
     else:
         # Get SRTM data using PyGMT, computing region based on provided source-receiver
