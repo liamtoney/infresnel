@@ -50,12 +50,16 @@ def _shortest_diffracted_path(d, z):
     return np.hstack([path_left[:-1], path_right])
 
 
-def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
+def calculate_paths(
+    src_lat, src_lon, rec_lat, rec_lon, dem_file=None, full_output=False
+):
     """Calculate elevation profiles, direct paths, and shortest diffracted paths.
 
     Paths are calculated for a given DEM (either a user-supplied `dem_file` or
     automatically downloaded 1 arc-second SRTM data) and an arbitrary number of
-    source-receiver pairs.
+    source-receiver pairs. By default, the function returns only the path length
+    differences. If `full_output` is set to `True`, then the complete path information
+    (lengths, coordinates, etc.) and the DEM used are returned.
 
     Note:
         Coordinates are expected to be in the WGS 84 datum.
@@ -68,10 +72,17 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
         rec_lon (int, float, list, tuple, or numpy.ndarray): One or more receiver
             longitudes
         dem_file (str or None): Path to DEM file (if `None`, then SRTM data are used)
+        full_output (bool): Toggle outputring full profile and path information and DEM,
+            vs. just the path length differences
 
     Returns:
-        list: List of xarray.Dataset objects, one per source-receiver pair, containing
-        elevation profiles and calculated paths with lengths
+        If `full_output` is `False` — a numpy.ndarray of path length differences [m],
+        one per source-receiver pair
+
+        If `full_output` is `True` — a tuple of the form ``(ds_list, dem)`` where
+        ``ds_list``  is a list of xarray.Dataset objects, one per source-receiver pair,
+        containing full profile and path information, and ``dem`` is an xarray.DataArray
+        contained the UTM-projected DEM used to compute the profiles
     """
 
     # Type checks
@@ -168,4 +179,8 @@ def calculate_paths(src_lat, src_lon, rec_lat, rec_lon, dem_file=None):
 
     print('Done')
 
-    return ds_list
+    # Determine what to output
+    if full_output:
+        return (ds_list, dem_utm)
+    else:
+        return np.array([ds.path_length_difference for ds in ds_list])
