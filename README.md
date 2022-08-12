@@ -46,7 +46,8 @@ this case, after step 1 above run
 conda activate <existing_environment>
 pip install --editable .
 ```
-which uses `pip` to install *infresnel*'s dependencies.
+which uses `pip` to install *infresnel*'s dependencies, if you don't already have them
+installed in your existing environment.
 
 In either installation case, your installation will be "editable" — meaning, you can
 modify the source code in your local `infresnel/` directory — or run a `git pull` to
