@@ -44,7 +44,7 @@ this computation as quick and convenient as possible.
 
 ## Usage
 
-🚧 **Detailed documentation is forthcoming!** 🚧 For now, check out
+🚧 **Detailed documentation is forthcoming!** For now, check out
 [`example_yasur.py`](example_yasur.py).
 
 ## Installation details
