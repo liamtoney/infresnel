@@ -42,6 +42,11 @@ this computation as quick and convenient as possible.
    >>> from infresnel import calculate_paths
    ```
 
+## Usage
+
+🚧 **Detailed documentation is forthcoming!** 🚧 For now, check out
+[`example_yasur.py`](example_yasur.py).
+
 ## Installation details
 
 *infresnel*'s dependencies are [PyGMT](https://www.pygmt.org/latest/) (for simplified
