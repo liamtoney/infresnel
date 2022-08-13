@@ -6,9 +6,9 @@
 propagation over topography at local to regional scales.
 
 <p align="middle">
-  <img src="yasur_dem_paths.png" height="380"/>
+  <img src="yasur_dem_paths.png" height="370"/>
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="yasur_path_comparison.png" height="380"/> 
+  <img src="yasur_path_comparison.png" height="370"/> 
 </p>
 
 ## Background and motivation
