@@ -5,6 +5,12 @@
 [infrasound](https://en.wikipedia.org/wiki/Infrasound) applications — specifically,
 propagation over topography at local to regional scales.
 
+<p align="middle">
+  <img src="yasur_dem_paths.png" height="300"/>
+   &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="yasur_path_comparison.png" height="300"/> 
+</p>
+
 ## Background and motivation
 
 The dimensionless Fresnel number $N$ for an acoustic wave with wavelength $\lambda$ is
