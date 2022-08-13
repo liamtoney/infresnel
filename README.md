@@ -64,7 +64,7 @@ SRTM data downloading and caching) and
 [rioxarray](https://corteva.github.io/rioxarray/stable/) (for DEM file I/O,
 reprojection, and elevation profile interpolation). These dependencies are listed in
 [`environment.yml`](environment.yml), and they are installed in step 2 above. Note that
-[Matplotlib](https://matplotlib.org/) is an **optional** dependency; it's used only for
+[Matplotlib](https://matplotlib.org/) is an optional dependency; it's used only for
 plotting.
 
 You might want to install *infresnel* into an existing
