@@ -22,7 +22,11 @@ travel due to topography, normalized by half a wavelength. The path length diffe
 $(R_\mathrm{f} - R_\mathrm{d})$ can additionally be used to estimate travel time delays
 due to diffraction over topography. The travel time delay $\delta_\mathrm{f}$ is given
 by $$\delta_\mathrm{f} = \frac{(R_\mathrm{f} - R_\mathrm{d})}{c},$$ where $c$ is the
-estimated acoustic wavespeed assuming a homogenous atmosphere.
+estimated acoustic wavespeed assuming a homogenous atmosphere. $\delta_\mathrm{f}$ has
+been shown to be comparable to travel time differences computed using finite-difference
+time-domain simulations — e.g., see
+[Fig. 2B](https://www.frontiersin.org/files/Articles/620813/feart-09-620813-HTML-r1/image_m/feart-09-620813-g002.jpg)
+in Fee et al. (2021).
 
 These are simple equations, but the practical computation of the quantity
 $(R_\mathrm{f} - R_\mathrm{d})$ is somewhat involved. The goal of *infresnel* is to make
@@ -78,6 +82,11 @@ source code in your local `infresnel/` directory — or run a `git pull` to upda
 any new remote changes — and the installed package will be updated.
 
 ## References
+
+Fee, D., Toney, L., Kim, K., Sanderson, R. W., Iezzi, A. M., Matoza, R. S., De Angelis, S.,
+Jolly, A. D., Lyons, J. J., & Haney, M. (2021). Local explosion detection and infrasound
+localization by reverse time migration using 3-D finite-difference wave propagation.
+*Frontiers in Earth Science*, *9*. https://doi.org/10.3389/feart.2021.620813
 
 Maher, S. P., Matoza, R. S., de Groot-Hedlin, C., Kim, K., & Gee, K. L. (2021).
 Evaluating the applicability of a screen diffraction approximation to local volcano
