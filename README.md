@@ -83,10 +83,11 @@ any new remote changes — and the installed package will be updated.
 
 ## References
 
-Fee, D., Toney, L., Kim, K., Sanderson, R. W., Iezzi, A. M., Matoza, R. S., De Angelis, S.,
-Jolly, A. D., Lyons, J. J., & Haney, M. (2021). Local explosion detection and infrasound
-localization by reverse time migration using 3-D finite-difference wave propagation.
-*Frontiers in Earth Science*, *9*. https://doi.org/10.3389/feart.2021.620813
+Fee, D., Toney, L., Kim, K., Sanderson, R. W., Iezzi, A. M., Matoza, R. S., De Angelis,
+S., Jolly, A. D., Lyons, J. J., & Haney, M. (2021). Local explosion detection and
+infrasound localization by reverse time migration using 3-D finite-difference wave
+propagation. *Frontiers in Earth Science*, *9*.
+https://doi.org/10.3389/feart.2021.620813
 
 Maher, S. P., Matoza, R. S., de Groot-Hedlin, C., Kim, K., & Gee, K. L. (2021).
 Evaluating the applicability of a screen diffraction approximation to local volcano
