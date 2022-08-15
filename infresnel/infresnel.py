@@ -139,7 +139,7 @@ def calculate_paths(
 
         # Print progress
         counter += 1
-        print('{:.1f}%'.format((counter / rec_lats.size) * 100), end='\r')
+        print('{:.0f}%'.format((counter / rec_lats.size) * 100), end='\r')
 
     print('Done')
 
