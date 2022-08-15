@@ -32,7 +32,9 @@ ds_list, dem = calculate_paths(
     full_output=True,
 )
 
-#%% Plots (optional)
+#%% Create example figures (optional)
+
+SAVE_EXAMPLE_FIGURES = False
 
 # We need Matplotlib, which is an optional dependency - so we install here if needed
 # fmt: off
@@ -61,7 +63,8 @@ ax.set_ylabel('UTM northing (m)')
 ax.legend(loc='lower right', frameon=False)
 fig.tight_layout()
 fig.show()
-# fig.savefig('yasur_dem_paths.png', bbox_inches='tight', dpi=300)
+if SAVE_EXAMPLE_FIGURES:
+    fig.savefig('example_figures/yasur_dem_paths.png', bbox_inches='tight', dpi=300)
 
 # Plot comparison of elevation profiles, direct paths, and shortest diffracted paths
 fig, axes = plt.subplots(nrows=3, sharex=True, sharey=True)
@@ -78,4 +81,7 @@ axes[1].set_ylabel('Elevation (m)')
 axes[1].legend(loc='center left', frameon=False, bbox_to_anchor=(1.05, 0.5))
 fig.tight_layout()
 fig.show()
-# fig.savefig('yasur_path_comparison.png', bbox_inches='tight', dpi=300)
+if SAVE_EXAMPLE_FIGURES:
+    fig.savefig(
+        'example_figures/yasur_path_comparison.png', bbox_inches='tight', dpi=300
+    )
