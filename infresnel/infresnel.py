@@ -1,8 +1,8 @@
 from pathlib import Path
 
 import numpy as np
+import pygmt
 import xarray as xr
-from pygmt.datasets import load_earth_relief
 from pyproj import CRS, Transformer
 
 from .helpers import (
@@ -74,7 +74,10 @@ def calculate_paths(
         x_buffer = (xmax - xmin) * 0.05
         y_buffer = (ymax - ymin) * 0.05
         region = [xmin - x_buffer, xmax + x_buffer, ymin - y_buffer, ymax + y_buffer]
-        dem = load_earth_relief(resolution='01s', region=region, use_srtm=True)
+        with pygmt.config(GMT_VERBOSE='e'):  # Suppress warnings
+            dem = pygmt.datasets.load_earth_relief(
+                resolution='01s', region=region, use_srtm=True
+            )
         dem.rio.write_crs(dem.horizontal_datum, inplace=True)
 
     # Clean DEM before going further
