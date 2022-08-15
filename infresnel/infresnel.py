@@ -86,8 +86,8 @@ def calculate_paths(
     dem_utm = dem.rio.reproject(utm_crs).drop('spatial_ref')
     print('Done\n')
 
-    # Determine target spacing of interpolated profiles from DEM spacing - does not seem to
-    # slow down code much if this is decreased
+    # Determine target spacing of interpolated profiles from DEM spacing - does not seem
+    # to slow down code much if this is decreased
     mean_resolution = np.abs(dem_utm.rio.resolution()).mean()
     target_spacing = mean_resolution / 2  # [m]
     print(
