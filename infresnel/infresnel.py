@@ -89,7 +89,7 @@ def calculate_paths(
     # Determine target spacing of interpolated profiles from DEM spacing - does not seem
     # to slow down code much if this is decreased
     mean_resolution = np.abs(dem_utm.rio.resolution()).mean()
-    target_spacing = mean_resolution / 2  # [m]
+    target_spacing = mean_resolution / 2  # [m] Oversample to avoid aliasing
     print(
         f'DEM spacing = {mean_resolution:.2f} m -> profile spacing = {target_spacing:.2f} m\n'
     )
