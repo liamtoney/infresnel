@@ -44,6 +44,10 @@ except ModuleNotFoundError:
     import matplotlib.pyplot as plt
 # fmt: on
 
+# Reset everything to defaults; use smaller font size
+plt.rcParams.update(plt.rcParamsDefault)
+plt.rc('font', size=9)
+
 # Plot DEM with source-receiver paths
 fig, ax = plt.subplots()
 dem.plot.imshow(ax=ax, cmap='Greys_r', cbar_kwargs=dict(label='Elevation (m)'))
@@ -67,7 +71,7 @@ for ax, var_name in zip(axes, ds.data_vars):
     ax.scatter(
         ds.distance[0], ds.elevation[0], c='white', ec='black', zorder=2, label='Source'
     )
-    ax.set_title(var_name, fontsize=9, fontname=['Courier', 'monospace'])
+    ax.set_title(var_name, fontsize='medium', fontname='monospace')
     ax.set_aspect('equal')
 axes[-1].set_xlabel('Horizontal distance (m)')
 axes[1].set_ylabel('Elevation (m)')
