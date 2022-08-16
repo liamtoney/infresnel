@@ -54,8 +54,9 @@ this computation as quick and convenient as possible.
 
 ## Usage
 
-🚧 **Detailed documentation is forthcoming!** For now, check out
-[`example_yasur.py`](example_yasur.py).
+🚧 **Detailed documentation is forthcoming!** For now, check out the docstring for
+`calculate_paths()` in [`infresnel/infresnel.py`](infresnel/infresnel.py), and see
+[`example_yasur.py`](example_yasur.py) for a usage example.
 
 ## Installation details
 
