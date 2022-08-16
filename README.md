@@ -41,6 +41,8 @@ this computation as quick and convenient as possible.
    ```
 
 2. Create environment, install, and activate
+   ([install conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html)
+   first, if necessary)
    ```
    conda env create
    conda activate infresnel
