@@ -52,7 +52,9 @@ plt.rc('font', size=9)
 
 # Plot DEM with source-receiver paths
 fig, ax = plt.subplots()
-dem.plot.imshow(ax=ax, cmap='Greys_r', cbar_kwargs=dict(label='Elevation (m)'))
+dem.plot.imshow(
+    ax=ax, cmap='Greys_r', center=False, cbar_kwargs=dict(label='Elevation (m)')
+)
 for ds, station in zip(ds_list, rec_df.Station):
     ax.plot(ds.x, ds.y, solid_capstyle='round', label=station)
 ax.scatter(ds.x[0], ds.y[0], c='white', ec='black', zorder=2, label='Source')
