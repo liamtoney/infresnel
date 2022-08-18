@@ -4,6 +4,7 @@ import numpy as np
 import pygmt
 import xarray as xr
 from pyproj import CRS, Transformer
+from rasterio.enums import Resampling
 
 from .helpers import (
     _direct_path,
@@ -86,7 +87,9 @@ def calculate_paths(
 
     # Project DEM to UTM
     utm_crs = CRS(dem.rio.estimate_utm_crs(datum_name='WGS 84'))
-    dem_utm = dem.rio.reproject(utm_crs).drop('spatial_ref')
+    dem_utm = dem.rio.reproject(utm_crs, resampling=Resampling.cubic_spline).drop(
+        'spatial_ref'
+    )
     print('Done\n')
 
     # Determine target spacing of interpolated profiles from DEM spacing - does not seem
