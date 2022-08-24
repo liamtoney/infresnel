@@ -85,7 +85,7 @@ for ax, var_name in zip(axes, ds.data_vars):
     ax.set_aspect('equal')
 axes[-1].set_xlabel('Horizontal distance (m)')
 axes[1].set_ylabel('Elevation (m)')
-axes[1].legend(loc='center left', frameon=False, bbox_to_anchor=(1.05, 0.5))
+# axes[1].legend(loc='center left', frameon=False, bbox_to_anchor=(1.05, 0.5))
 fig.tight_layout()
 fig.show()
 if SAVE_EXAMPLE_FIGURES:
