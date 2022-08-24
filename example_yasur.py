@@ -1,6 +1,7 @@
 from pathlib import Path
 from urllib.request import urlretrieve
 
+import numpy as np
 import pandas as pd
 
 from infresnel import calculate_paths
@@ -40,10 +41,12 @@ SAVE_EXAMPLE_FIGURES = False
 # fmt: off
 try:
     import matplotlib.pyplot as plt
+    from matplotlib.colors import LightSource
 except ModuleNotFoundError:
     import subprocess
     subprocess.run(['pip', 'install', 'matplotlib'])
     import matplotlib.pyplot as plt
+    from matplotlib.colors import LightSource
 # fmt: on
 
 # Reset everything to defaults; use smaller font size
@@ -52,9 +55,11 @@ plt.rc('font', size=9)
 
 # Plot DEM with source-receiver paths
 fig, ax = plt.subplots()
-dem.plot.imshow(
-    ax=ax, cmap='Greys_r', center=False, cbar_kwargs=dict(label='Elevation (m)')
+hs = dem.copy()
+hs.data = LightSource().hillshade(
+    dem.data, dx=np.abs(np.diff(dem.x)).mean(), dy=np.abs(np.diff(dem.y)).mean()
 )
+hs.plot.imshow(ax=ax, cmap='Greys_r', alpha=0.5, add_colorbar=False)
 for ds, station in zip(ds_list, rec_df.Station):
     ax.plot(ds.x, ds.y, solid_capstyle='round', label=station)
 ax.scatter(ds.x[0], ds.y[0], c='white', ec='black', zorder=2, label='Source')
@@ -62,7 +67,7 @@ ax.ticklabel_format(style='plain')
 ax.set_aspect('equal')
 ax.set_xlabel('UTM easting (m)')
 ax.set_ylabel('UTM northing (m)')
-ax.legend(loc='lower right', frameon=False)
+ax.legend(loc='center left', frameon=False, bbox_to_anchor=(1.05, 0.5))
 fig.tight_layout()
 fig.show()
 if SAVE_EXAMPLE_FIGURES:
