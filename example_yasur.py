@@ -1,7 +1,6 @@
 from pathlib import Path
 from urllib.request import urlretrieve
 
-import numpy as np
 import pandas as pd
 
 from infresnel import calculate_paths
@@ -40,24 +39,24 @@ SAVE_EXAMPLE_FIGURES = False
 # We need Matplotlib, which is an optional dependency - so we install here if needed
 # fmt: off
 try:
-    import matplotlib.pyplot as plt
-    from matplotlib.colors import LightSource
+    import matplotlib
 except ModuleNotFoundError:
     import subprocess
     subprocess.run(['pip', 'install', 'matplotlib'])
-    import matplotlib.pyplot as plt
-    from matplotlib.colors import LightSource
+    import matplotlib
 # fmt: on
 
 # Reset everything to defaults; use smaller font size
-plt.rcParams.update(plt.rcParamsDefault)
-plt.rc('font', size=9)
+matplotlib.rcParams.update(matplotlib.rcParamsDefault)
+matplotlib.rc('font', size=9)
 
 # Plot DEM with source-receiver paths
-fig, ax = plt.subplots()
+fig, ax = matplotlib.pyplot.subplots()
 hs = dem.copy()
-hs.data = LightSource().hillshade(
-    dem.data, dx=np.abs(np.diff(dem.x)).mean(), dy=np.abs(np.diff(dem.y)).mean()
+hs.data = matplotlib.colors.LightSource().hillshade(
+    dem.data,
+    dx=abs(dem.x.diff('x').mean().values),
+    dy=abs(dem.y.diff('y').mean().values),
 )
 hs.plot.imshow(ax=ax, cmap='Greys_r', alpha=0.5, add_colorbar=False)
 for ds, station in zip(ds_list, rec_df.Station):
@@ -74,7 +73,7 @@ if SAVE_EXAMPLE_FIGURES:
     fig.savefig('example_figures/yasur_dem_paths.png', bbox_inches='tight', dpi=300)
 
 # Plot comparison of elevation profiles, direct paths, and shortest diffracted paths
-fig, axes = plt.subplots(nrows=3, sharex=True, sharey=True)
+fig, axes = matplotlib.pyplot.subplots(nrows=3, sharex=True, sharey=True)
 for ax, var_name in zip(axes, ds.data_vars):
     for ds, station in zip(ds_list, rec_df.Station):
         ax.plot(ds.distance, ds[var_name], solid_capstyle='round', label=station)
