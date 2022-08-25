@@ -17,7 +17,7 @@ rec_df = rec_df[rec_df.Station != 'YIF6']  # Don't include YIF6
 # Download Yasur DEM, if it doesn't already exist (~200 MB GeoTIFF)
 DEM_URL = 'https://opentopography.s3.sdsc.edu/dataspace/OTDS.072019.4326.1/raster/DEM_WGS84.tif'
 dem_file = DEM_URL.split('/')[-1]
-if not Path(dem_file).exists():
+if not Path(dem_file).is_file():
     print('Downloading DEM...')
     urlretrieve(DEM_URL, dem_file)
     print('Done\n')

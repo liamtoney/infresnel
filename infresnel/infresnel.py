@@ -62,7 +62,7 @@ def calculate_paths(
     if dem_file is not None:
         # Load user-provided DEM, first checking if it exists
         dem_file = Path(str(dem_file)).expanduser().resolve()
-        assert dem_file.exists(), 'dem_file does not exist!'
+        assert dem_file.is_file(), 'dem_file does not exist!'
         dem = xr.open_dataarray(dem_file)
     else:
         # Get SRTM data using PyGMT, computing region (buffered by 5% in each direction)
