@@ -47,7 +47,7 @@ def calculate_paths(
         If `full_output` is `True` — a tuple of the form ``(ds_list, dem)`` where
         ``ds_list``  is a list of :class:`~xarray.Dataset` objects, one per source-receiver pair,
         containing full profile and path information, and ``dem`` is a :class:`~xarray.DataArray`
-        contained the UTM-projected DEM used to compute the profiles
+        containing the UTM-projected DEM used to compute the profiles
     """
 
     # Type checks
