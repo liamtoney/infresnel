@@ -87,7 +87,7 @@ im = ax.pcolormesh(
     # vmax=0.42,  # Match Fig. 2B in Fee et al. (2021)
 )
 src_utm = proj.transform(src_lat, src_lon, direction='INVERSE')
-ax.scatter(*transform(*src_utm), s=180, marker='v', color='black', lw=0)
+ax.scatter(*transform(*src_utm), s=180, marker='v', color='black', lw=0, zorder=2)
 ax.text(
     *transform(src_utm[0], src_utm[1] + 5),  # [m] Shifting text here
     src_ser.Station[-1],  # Just use station # here
@@ -96,6 +96,7 @@ ax.text(
     va='center',
     fontsize=8,
     weight='bold',
+    zorder=2,
 )
 ax.set_title(f'{SPACING} m spacing — {toc - tic:.0f} s')
 ax.grid(linestyle=':', alpha=0.5)
