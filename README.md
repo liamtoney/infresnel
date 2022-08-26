@@ -25,8 +25,8 @@ estimated acoustic wavespeed assuming a homogenous atmosphere. $\delta_\mathrm{f
 been shown to be comparable to travel time differences computed using finite-difference
 time-domain simulations — e.g., see
 [Fig. 2B](https://www.frontiersin.org/files/Articles/620813/feart-09-620813-HTML-r1/image_m/feart-09-620813-g002.jpg)
-in Fee et al. (2021).
-
+in Fee et al. (2021).<br>
+<br>
 These are simple equations, but the practical computation of the quantity
 $(R_\mathrm{f} - R_\mathrm{d})$ is somewhat involved. The goal of *infresnel* is to make
 this computation as quick and convenient as possible.
