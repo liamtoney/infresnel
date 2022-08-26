@@ -1,5 +1,7 @@
 # *infresnel*
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/liamtoney/infresnel/binder?labpath=example_yasur.ipynb)
+
 *infresnel* is a Python package which facilitates computation of the
 [Fresnel number](https://en.wikipedia.org/wiki/Fresnel_number) for
 [infrasound](https://en.wikipedia.org/wiki/Infrasound) applications — specifically,
@@ -57,17 +59,18 @@ this computation as quick and convenient as possible.
 
 🚧 **Detailed documentation is forthcoming!** For now, check out the docstring for
 `calculate_paths()` in [`infresnel/infresnel.py`](infresnel/infresnel.py), and see
-[`example_yasur.py`](example_yasur.py) for a usage example.
+[`example_yasur.ipynb`](example_yasur.ipynb) for a usage example.
 
 ## Installation details
 
-*infresnel*'s dependencies are [PyGMT](https://www.pygmt.org/latest/) (for simplified
-SRTM data downloading and caching) and
-[rioxarray](https://corteva.github.io/rioxarray/stable/) (for DEM file I/O,
-reprojection, and elevation profile interpolation). These dependencies are listed in
-[`environment.yml`](environment.yml), and they are installed in step 2 above. Note that
-[Matplotlib](https://matplotlib.org/) is an optional dependency; it's used only for
-plotting.
+*infresnel*'s dependencies are
+[JupyterLab](https://jupyterlab.readthedocs.io/en/stable/) (for interactive
+functionality), [PyGMT](https://www.pygmt.org/latest/) (for simplified SRTM data
+downloading and caching), and [rioxarray](https://corteva.github.io/rioxarray/stable/)
+(for DEM file I/O, reprojection, and elevation profile interpolation). These
+dependencies are listed in [`environment.yml`](environment.yml), and they are
+installed in step 2 above. Note that [Matplotlib](https://matplotlib.org/) is an
+optional dependency; it's used only for plotting.
 
 You might want to install *infresnel* into an existing
 [conda](https://docs.conda.io/en/latest/) environment, instead of making a new one. In
