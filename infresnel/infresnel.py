@@ -32,21 +32,21 @@ def calculate_paths(
     Args:
         src_lat (int or float): Source latitude
         src_lon (int or float): Source longitude
-        rec_lat (int, float, list, tuple, or numpy.ndarray): One or more receiver
+        rec_lat (int, float, list, tuple, or :class:`~numpy.ndarray`): One or more receiver
             latitudes
-        rec_lon (int, float, list, tuple, or numpy.ndarray): One or more receiver
+        rec_lon (int, float, list, tuple, or :class:`~numpy.ndarray`): One or more receiver
             longitudes
         dem_file (str or None): Path to DEM file (if `None`, then SRTM data are used)
         full_output (bool): Toggle outputting full profile/path information and DEM, vs.
             just the path length differences
 
     Returns:
-        If `full_output` is `False` — a numpy.ndarray of path length differences [m],
+        If `full_output` is `False` — a :class:`~numpy.ndarray` of path length differences [m],
         one per source-receiver pair
 
         If `full_output` is `True` — a tuple of the form ``(ds_list, dem)`` where
-        ``ds_list``  is a list of xarray.Dataset objects, one per source-receiver pair,
-        containing full profile and path information, and ``dem`` is an xarray.DataArray
+        ``ds_list``  is a list of :class:`~xarray.Dataset` objects, one per source-receiver pair,
+        containing full profile and path information, and ``dem`` is a :class:`~xarray.DataArray`
         contained the UTM-projected DEM used to compute the profiles
     """
 
