@@ -1,5 +1,7 @@
 # *infresnel*
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/liamtoney/infresnel/binder?labpath=example_yasur.ipynb)
+
 *infresnel* is a Python package which facilitates computation of the
 [Fresnel number](https://en.wikipedia.org/wiki/Fresnel_number) for
 [infrasound](https://en.wikipedia.org/wiki/Infrasound) applications — specifically,
