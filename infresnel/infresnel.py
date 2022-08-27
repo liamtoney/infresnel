@@ -1,10 +1,12 @@
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import pygmt
 import xarray as xr
 from pyproj import CRS, Transformer
 from rasterio.enums import Resampling
+from scipy.interpolate import RectBivariateSpline
 
 from .helpers import (
     _direct_path,
@@ -92,8 +94,8 @@ def calculate_paths(
     )
     print('Done\n')
 
-    # Determine target spacing of interpolated profiles from DEM spacing - does not seem
-    # to slow down code much if this is decreased
+    # Determine target spacing of interpolated profiles from DEM spacing - decreasing
+    # the spacing makes things slower! TODO: Is oversampling actually needed w/ spline interpolation?
     mean_resolution = np.abs(dem_utm.rio.resolution()).mean()
     target_spacing = mean_resolution / 2  # [m] Oversample to avoid aliasing
     print(
@@ -105,6 +107,20 @@ def calculate_paths(
     src_x, src_y = proj.transform(src_lat, src_lon)
     rec_xs, rec_ys = proj.transform(rec_lats, rec_lons)
 
+    # Fit bivariate spline to DEM (slow for very high resolution DEMs!)
+    print('Fitting spline to DEM...')
+    x = dem_utm.x
+    y = dem_utm.y
+    z = dem_utm.fillna(0).T  # Can't have NaNs in z; have to transpose for some reason
+    if not pd.Series(x).is_monotonic_increasing:
+        x = x[::-1]
+        z = np.fliplr(z)
+    if not pd.Series(y).is_monotonic_increasing:
+        y = y[::-1]
+        z = np.flipud(z)
+    spline = RectBivariateSpline(x=x, y=y, z=z)  # x and y must be monotonic increasing
+    print('Done\n')
+
     # Iterate over all receivers (= source-receiver pairs), calculating paths
     ds_list = []
     counter = 0
@@ -115,14 +131,15 @@ def calculate_paths(
         dist = np.linalg.norm([src_x - rec_x, src_y - rec_y])
         n = int(np.ceil(dist / target_spacing))
 
-        # Make profile and clean up
-        profile = dem_utm.interp(
-            x=xr.DataArray(np.linspace(src_x, rec_x, n)),
-            y=xr.DataArray(np.linspace(src_y, rec_y, n)),
-            method='linear',
+        # Make profile by evaluating spline
+        xvec = np.linspace(src_x, rec_x, n)
+        yvec = np.linspace(src_y, rec_y, n)
+        profile = xr.DataArray(
+            spline.ev(xvec, yvec),
+            dims='distance',
+            coords=dict(x=('distance', xvec), y=('distance', yvec)),
         )
-        profile = profile.assign_coords(dim_0=_horizontal_distance(profile))
-        profile = profile.rename(dim_0='distance')
+        profile = profile.assign_coords(distance=_horizontal_distance(profile))
 
         # Compute DIRECT path
         direct_path = _direct_path(profile.distance.values, profile.values)
@@ -135,7 +152,7 @@ def calculate_paths(
         # Make nice Dataset of all info
         ds = xr.Dataset(
             {
-                profile.name: profile,
+                'elevation': profile,
                 'direct_path': ('distance', direct_path, dict(length=direct_path_len)),
                 'diffracted_path': ('distance', diff_path, dict(length=diff_path_len)),
             },
