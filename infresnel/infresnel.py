@@ -111,14 +111,14 @@ def calculate_paths(
     print('Fitting spline to DEM...')
     x = dem_utm.x
     y = dem_utm.y
-    z = dem_utm.fillna(0).T  # Can't have NaNs in z; have to transpose for some reason
+    z = dem_utm.fillna(0)  # Can't have NaNs in z
     if not pd.Series(x).is_monotonic_increasing:
         x = x[::-1]
         z = np.fliplr(z)
     if not pd.Series(y).is_monotonic_increasing:
         y = y[::-1]
         z = np.flipud(z)
-    spline = RectBivariateSpline(x=x, y=y, z=z)  # x and y must be monotonic increasing
+    spline = RectBivariateSpline(x=x, y=y, z=z.T)  # x and y are monotonic increasing
     print('Done\n')
 
     # Iterate over all receivers (= source-receiver pairs), calculating paths
