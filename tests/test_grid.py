@@ -65,7 +65,7 @@ path_length_differences = calculate_paths(
 )
 
 toc = time.time()
-print(f'Done (elapsed time = {toc - tic:.0f} s)')
+print(f'\nElapsed time = {toc - tic:.0f} s')
 
 travel_time_delays = np.reshape(path_length_differences / CELERITY, rec_lat.shape)
 
