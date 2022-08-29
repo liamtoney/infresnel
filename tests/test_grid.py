@@ -36,10 +36,7 @@ src_lat, src_lon = src_ser.Latitude, src_ser.Longitude
 YASUR_CRS = CRS(32759)
 
 # Define [gridline-registered] grid of receiver locations
-SPACING = 100  # [m] 67 s
-# SPACING = 50  # [m] 249 s
-# SPACING = 25  # [m] 968 s
-# SPACING = 10  # [m] 6201 s
+SPACING = 100  # [m]
 XLIM = (336000, 338200)  # [m] in YASUR_CRS
 YLIM = (7839200, 7840600)  # [m] in YASUR_CRS
 
