@@ -1,24 +1,33 @@
 import numpy as np
+from numba import njit
 
 
-# Calculate horizontal distance vector for a profile DataArray
-def _horizontal_distance(profile):
-    return np.hstack(
-        [0, np.cumsum(np.linalg.norm([np.diff(profile.x), np.diff(profile.y)], axis=0))]
-    )
+# Equivalent to np.linalg.norm([a, b], axis=0), which Numba has not implemented
+@njit
+def _norm(a, b):
+    return np.sqrt((a**2) + (b**2))
+
+
+# Calculate horizontal distance vector
+@njit
+def _horizontal_distance(x, y):
+    return np.hstack((np.array([0]), np.cumsum(_norm(np.diff(x), np.diff(y)))))
 
 
 # Compute along-path length
+@njit
 def _path_length(d, z):
-    return np.linalg.norm([np.diff(d), np.diff(z)], axis=0).sum()
+    return _norm(np.diff(d), np.diff(z)).sum()
 
 
 # Compute DIRECT path
+@njit
 def _direct_path(d, z):
     return (z[-1] - z[0]) / (d[-1] - d[0]) * (d - d[0]) + z[0]  # d - d[0] for intercept
 
 
 # [Recursively] compute SHORTEST DIFFRACTED path
+@njit
 def _shortest_diffracted_path(d, z):
 
     # Compute the direct path
@@ -26,7 +35,7 @@ def _shortest_diffracted_path(d, z):
 
     # If z is everywhere "on" or "underneath" the direct path, we're done (first
     # we mask values that are ~equal; then we check for "less than")
-    isclose = np.isclose(z, direct_path)
+    isclose = np.abs(z - direct_path) < np.finfo(np.float32).eps
     if (z[~isclose] < direct_path[~isclose]).all():
         return direct_path
 
@@ -42,4 +51,4 @@ def _shortest_diffracted_path(d, z):
     path_right = _shortest_diffracted_path(d[right], z[right])
 
     # Join at common midpoint, removing duplicate
-    return np.hstack([path_left[:-1], path_right])
+    return np.hstack((path_left[:-1], path_right))

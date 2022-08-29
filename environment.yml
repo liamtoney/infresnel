@@ -5,6 +5,7 @@ channels:
 dependencies:
   - jupyterlab
 #  - matplotlib  # OPTIONAL, for plotting
+  - numba
   - pip
   - pygmt
   - rioxarray
