@@ -139,7 +139,9 @@ def calculate_paths(
             dims='distance',
             coords=dict(x=('distance', xvec), y=('distance', yvec)),
         )
-        profile = profile.assign_coords(distance=_horizontal_distance(profile))
+        profile = profile.assign_coords(
+            distance=_horizontal_distance(profile.x.values, profile.y.values)
+        )
 
         # Compute DIRECT path
         direct_path = _direct_path(profile.distance.values, profile.values)
