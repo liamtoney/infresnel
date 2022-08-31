@@ -87,6 +87,12 @@ In either case, your installation will be "editable." This means that you can mo
 source code in your local `infresnel` directory — or run a `git pull` to update with
 any new remote changes — and the installed package will be updated.
 
+To additionally install *infresnel*'s development packages, run
+```
+conda activate <environment_with_infresnel_installed>
+pip install --requirement requirements.txt
+```
+
 ## References
 
 Fee, D., Toney, L., Kim, K., Sanderson, R. W., Iezzi, A. M., Matoza, R. S., De Angelis,
