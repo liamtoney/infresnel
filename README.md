@@ -84,7 +84,7 @@ which uses [pip](https://pip.pypa.io/en/stable/) to install *infresnel*'s depend
 if you don't already have them installed in your existing environment.
 
 In either case, your installation will be "editable." This means that you can modify the
-source code in your local `infresnel/` directory — or run a `git pull` to update with
+source code in your local `infresnel` directory — or run a `git pull` to update with
 any new remote changes — and the installed package will be updated.
 
 ## References
