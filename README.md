@@ -64,8 +64,8 @@ this computation as quick and convenient as possible.
 ## Installation details
 
 *infresnel*'s dependencies are
-[JupyterLab](https://jupyterlab.readthedocs.io/en/stable/) (for interactive
-functionality), [Numba](https://numba.pydata.org/) (for computational
+[JupyterLab](https://jupyterlab.readthedocs.io/en/stable/) (for running the interactive
+`.ipynb` notebooks), [Numba](https://numba.pydata.org/) (for computational
 acceleration), [PyGMT](https://www.pygmt.org/latest/) (for simplified SRTM data
 downloading and caching), and [rioxarray](https://corteva.github.io/rioxarray/stable/)
 (for DEM file I/O, reprojection, and elevation profile interpolation). These
