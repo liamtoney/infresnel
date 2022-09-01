@@ -1,4 +1,4 @@
 # To install these developer packages, activate your existing conda environment and run:
 # pip install --requirement requirements.txt
-black
+black[jupyter]
 isort
