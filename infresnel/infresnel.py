@@ -255,15 +255,13 @@ def calculate_paths_grid(src_lat, src_lon, radius, spacing, dem_file=None):
     print(f'\nElapsed time = {toc - tic:.0f} s')
 
     # Form a nicely-labeled DataArray from grid of path length differences
+    units = dict(units='m')
     path_length_differences = xr.DataArray(
-        np.reshape([ds.path_length_difference for ds in ds_list], rec_lat.shape),
-        coords=[
-            ('utm_northing', yvec, dict(units='m')),
-            ('utm_easting', xvec, dict(units='m')),
-        ],
+        np.reshape([ds.path_length_difference for ds in ds_list], rec_lat.shape).T,
+        coords=[('x', xvec, units), ('y', yvec, units)],
         name='path_length_difference',
-        attrs=dict(units='m', spacing=spacing),
-    )
+        attrs=dict(spacing=spacing, **units),
+    ).transpose()
     path_length_differences.rio.write_crs(utm_crs, inplace=True)
 
     return path_length_differences, dem
