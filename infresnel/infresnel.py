@@ -254,7 +254,7 @@ def calculate_paths_grid(src_lat, src_lon, radius, spacing, dem_file=None):
     toc = time.time()
     print(f'\nElapsed time = {toc - tic:.0f} s')
 
-    # Form a nicely-labeld DataArray from grid of path length differences
+    # Form a nicely-labeled DataArray from grid of path length differences
     path_length_differences = xr.DataArray(
         np.reshape([ds.path_length_difference for ds in ds_list], rec_lat.shape),
         coords=[
