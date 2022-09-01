@@ -1,3 +1,4 @@
+import time
 from pathlib import Path
 
 import numpy as np
@@ -5,6 +6,8 @@ import pandas as pd
 import pygmt
 import xarray as xr
 from pyproj import CRS, Transformer
+from pyproj.aoi import AreaOfInterest
+from pyproj.database import query_utm_crs_info
 from rasterio.enums import Resampling
 from scipy.interpolate import RectBivariateSpline
 
@@ -175,3 +178,82 @@ def calculate_paths(
         return ds_list, dem_utm
     else:
         return np.array([ds.path_length_difference for ds in ds_list])
+
+
+def calculate_paths_grid(src_lat, src_lon, radius, spacing, dem_file=None):
+    """Calculate paths for a UTM-projected grid surrounding a source location.
+
+    Wrapper around :func:`calculate_paths` for computing path difference grids. See the
+    docstring for that function for a description of how DEM data are handled.
+
+    Note:
+        Input coordinates are expected to be in the WGS 84 datum. DEM file vertical
+        units are expected to be meters.
+
+    Args:
+        src_lat (int or float): Source latitude
+        src_lon (int or float): Source longitude
+        radius (int or float): [m] Desired grid radius, measured from source location
+        spacing (int or float): [m] Desired grid spacing
+        dem_file (str or None): Path to DEM file (if `None`, then SRTM data are used)
+
+    Returns:
+        tuple:  Tuple of the form ``(path_length_differences, dem)`` where
+        ``path_length_differences``  is a :class:`~xarray.DataArray` grid of path length
+        differences [m], and ``dem`` is a :class:`~xarray.DataArray` containing the
+        UTM-projected DEM used to compute the profiles
+    """
+
+    # Find UTM CRS of source (see https://gis.stackexchange.com/a/423614)
+    utm_crs_list = query_utm_crs_info(
+        datum_name='WGS 84',
+        area_of_interest=AreaOfInterest(
+            west_lon_degree=src_lon,
+            south_lat_degree=src_lat,
+            east_lon_degree=src_lon,
+            north_lat_degree=src_lat,
+        ),
+    )
+    utm_crs = CRS.from_epsg(utm_crs_list[0].code)
+
+    # Get UTM coords for source
+    proj = Transformer.from_crs(utm_crs, utm_crs.geodetic_crs)
+    src_x, src_y = proj.transform(src_lat, src_lon, direction='INVERSE')
+
+    # Define [gridline-registered] grid of receiver locations [m]
+    xlim = (src_x - radius, src_x + radius)
+    ylim = (src_y - radius, src_y + radius)
+
+    # Convert gridline registration to pixel registration
+    xvec = np.arange(xlim[0] + spacing / 2, xlim[1] + spacing / 2, spacing)
+    yvec = np.arange(ylim[0] + spacing / 2, ylim[1] + spacing / 2, spacing)
+
+    # Convert "receiver" UTM coordinates to lat/lon grid
+    rec_lat, rec_lon = proj.transform(*np.meshgrid(xvec, yvec))
+
+    # Call calculate_paths()
+    tic = time.time()
+    ds_list, dem = calculate_paths(
+        src_lat=src_lat,
+        src_lon=src_lon,
+        rec_lat=rec_lat.flatten(),
+        rec_lon=rec_lon.flatten(),
+        dem_file=dem_file,
+        full_output=True,
+    )
+    toc = time.time()
+    print(f'\nElapsed time = {toc - tic:.0f} s')
+
+    # Form a nicely-labeld DataArray from grid of path length differences
+    path_length_differences = xr.DataArray(
+        np.reshape([ds.path_length_difference for ds in ds_list], rec_lat.shape),
+        coords=[
+            ('utm_northing', yvec, dict(units='m')),
+            ('utm_easting', xvec, dict(units='m')),
+        ],
+        name='path_length_difference',
+        attrs=dict(units='m', spacing=spacing),
+    )
+    path_length_differences.rio.write_crs(utm_crs, inplace=True)
+
+    return path_length_differences, dem
