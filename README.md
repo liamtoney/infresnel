@@ -57,8 +57,9 @@ this computation as quick and convenient as possible.
 
 ## Usage
 
-🚧 **Detailed documentation is forthcoming!** For now, check out the docstring for
-`calculate_paths()` in [`infresnel/infresnel.py`](infresnel/infresnel.py), and see
+🚧 **Detailed documentation is forthcoming!** For now, check out the docstrings for
+`calculate_paths()` and `calculate_paths_grid()` in
+[`infresnel/infresnel.py`](infresnel/infresnel.py), and see
 [`example_yasur.ipynb`](example_yasur.ipynb) for a usage example.
 
 ## Installation details
