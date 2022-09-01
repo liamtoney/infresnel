@@ -85,13 +85,14 @@ def calculate_paths(
 
     # Clean DEM before going further
     dem = dem.squeeze(drop=True).rename('elevation')
-    dem.attrs = {}
 
-    # Project DEM to UTM
+    # Project DEM to UTM, further relabeling
     utm_crs = CRS(dem.rio.estimate_utm_crs(datum_name='WGS 84'))
-    dem_utm = dem.rio.reproject(utm_crs, resampling=Resampling.cubic_spline).drop(
-        'spatial_ref'
-    )
+    dem_utm = dem.rio.reproject(utm_crs, resampling=Resampling.cubic_spline)
+    units = dict(units='m')
+    dem_utm.attrs = units
+    for coordinate in 'x', 'y':
+        dem_utm[coordinate].attrs = units
     print('Done\n')
 
     # Determine target spacing of interpolated profiles from DEM spacing - decreasing
@@ -137,11 +138,13 @@ def calculate_paths(
         profile = xr.DataArray(
             spline.ev(xvec, yvec),
             dims='distance',
-            coords=dict(x=('distance', xvec), y=('distance', yvec)),
+            coords=dict(x=('distance', xvec, units), y=('distance', yvec, units)),
+            attrs=units,
         )
         profile = profile.assign_coords(
             distance=_horizontal_distance(profile.x.values, profile.y.values)
         )
+        profile.distance.attrs = units
 
         # Compute DIRECT path
         direct_path = _direct_path(profile.distance.values, profile.values)
@@ -155,13 +158,20 @@ def calculate_paths(
         ds = xr.Dataset(
             {
                 'elevation': profile,
-                'direct_path': ('distance', direct_path, dict(length=direct_path_len)),
-                'diffracted_path': ('distance', diff_path, dict(length=diff_path_len)),
+                'direct_path': (
+                    'distance',
+                    direct_path,
+                    dict(length=direct_path_len, **units),
+                ),
+                'diffracted_path': (
+                    'distance',
+                    diff_path,
+                    dict(length=diff_path_len, **units),
+                ),
             },
-            attrs=dict(
-                path_length_difference=diff_path_len - direct_path_len, units='m'
-            ),
+            attrs=dict(path_length_difference=diff_path_len - direct_path_len, **units),
         )
+        ds.rio.write_crs(utm_crs, inplace=True)
         ds_list.append(ds)
 
         # Print progress
