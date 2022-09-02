@@ -237,6 +237,7 @@ def calculate_paths_grid(src_lat, src_lon, radius, spacing, dem_file=None):
     # Convert gridline registration to pixel registration
     xvec = np.arange(xlim[0] + spacing / 2, xlim[1] + spacing / 2, spacing)
     yvec = np.arange(ylim[0] + spacing / 2, ylim[1] + spacing / 2, spacing)
+    yvec = yvec[::-1]  # This places the origin at top-left
 
     # Convert "receiver" UTM coordinates to lat/lon grid
     rec_lat, rec_lon = proj.transform(*np.meshgrid(xvec, yvec))
