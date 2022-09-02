@@ -34,8 +34,8 @@ src_lat, src_lon = src_ser.Latitude, src_ser.Longitude
 
 # Define [gridline-registered] grid of receiver locations
 SPACING = 100  # [m]
-XLIM = (336000, 338200)  # [m] UTM zone 59 S
-YLIM = (7839200, 7840600)  # [m] UTM zone 59 S
+XLIM = (336000, 338200)  # [m] UTM zone 59S
+YLIM = (7839200, 7840600)  # [m] UTM zone 59S
 
 #%% Calculate travel time delay grid
 
