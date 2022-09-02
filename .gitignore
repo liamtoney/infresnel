@@ -1,5 +1,5 @@
 /.idea/
 /infresnel.egg-info/
-/DEM_WGS84.tif
+/notebooks/DEM_WGS84.tif
 .ipynb_checkpoints/
 .DS_Store
