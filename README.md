@@ -60,7 +60,12 @@ this computation as quick and convenient as possible.
 🚧 **Detailed documentation is forthcoming!** For now, check out the docstrings for
 `calculate_paths()` and `calculate_paths_grid()` in
 [`infresnel/infresnel.py`](infresnel/infresnel.py), and see the interactive notebooks in
-[`notebooks/`](notebooks) for usage examples.
+[`notebooks`](notebooks) for usage examples.
+
+To open the notebooks, with your conda environment activated run
+```
+jupyter lab notebooks
+```
 
 ## Installation details
 
