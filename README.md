@@ -64,13 +64,13 @@ this computation as quick and convenient as possible.
 
 To open the notebooks, with your conda environment activated run
 ```
-jupyter lab notebooks
+jupyter notebook notebooks
 ```
 
 ## Installation details
 
 *infresnel*'s dependencies are
-[JupyterLab](https://jupyterlab.readthedocs.io/en/stable/) (for running the interactive
+[Jupyter Notebook](https://jupyter.org/) (for running the interactive
 `.ipynb` notebooks), [Numba](https://numba.pydata.org/) (for computational
 acceleration), [PyGMT](https://www.pygmt.org/latest/) (for simplified SRTM data
 downloading and caching), and [rioxarray](https://corteva.github.io/rioxarray/stable/)
