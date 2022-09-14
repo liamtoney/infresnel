@@ -6,12 +6,11 @@ import pandas as pd
 import pygmt
 import xarray as xr
 from pyproj import CRS, Transformer
-from pyproj.aoi import AreaOfInterest
-from pyproj.database import query_utm_crs_info
 from rasterio.enums import Resampling
 from scipy.interpolate import RectBivariateSpline
 
-from .helpers import (
+from ._georeference import _estimate_utm_crs
+from ._path import (
     _direct_path,
     _horizontal_distance,
     _path_length,
@@ -214,17 +213,8 @@ def calculate_paths_grid(src_lat, src_lon, radius, spacing, dem_file=None):
         UTM-projected DEM used to compute the profiles
     """
 
-    # Find UTM CRS of source (see https://gis.stackexchange.com/a/423614)
-    utm_crs_list = query_utm_crs_info(
-        datum_name='WGS 84',
-        area_of_interest=AreaOfInterest(
-            west_lon_degree=src_lon,
-            south_lat_degree=src_lat,
-            east_lon_degree=src_lon,
-            north_lat_degree=src_lat,
-        ),
-    )
-    utm_crs = CRS.from_epsg(utm_crs_list[0].code)
+    # Find UTM CRS of source
+    utm_crs = _estimate_utm_crs(src_lat, src_lon, datum_name='WGS 84')
 
     # Get UTM coords for source
     proj = Transformer.from_crs(utm_crs, utm_crs.geodetic_crs)
