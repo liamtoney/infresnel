@@ -89,7 +89,7 @@ def calculate_paths(
     dem = dem.squeeze(drop=True).rename('elevation')
 
     # Project DEM to UTM, further relabeling
-    utm_crs = CRS(dem.rio.estimate_utm_crs(datum_name='WGS 84'))
+    utm_crs = _estimate_utm_crs(src_lat, src_lon, datum_name='WGS 84')
     dem_utm = dem.rio.reproject(utm_crs, resampling=Resampling.cubic_spline)
     units = dict(units='m')
     dem_utm.attrs = units
