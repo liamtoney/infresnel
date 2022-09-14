@@ -5,22 +5,22 @@ path difference time delays.
 TODO: Make this into a proper testing file for use with pytest...
 """
 
-import time
-
 # We need Matplotlib, which is an optional dependency - so we install here if needed
 # fmt: off
 try:
+    import matplotlib
     import matplotlib.pyplot as plt
 except ModuleNotFoundError:
     import subprocess
     subprocess.run(['pip', 'install', 'matplotlib'])
+    import matplotlib
     import matplotlib.pyplot as plt
 # fmt: on
 import numpy as np
 import pandas as pd
 from pyproj import CRS, Transformer
 
-from infresnel import calculate_paths
+from infresnel import calculate_paths_grid
 
 CELERITY = 343.5  # [m/s] From Fee et al. (2021)
 
@@ -32,58 +32,54 @@ SRC_URL = 'http://service.iris.edu/fdsnws/station/1/query?net=3E&sta=YIF6&format
 src_ser = pd.read_csv(SRC_URL, sep='|', comment='#').squeeze()
 src_lat, src_lon = src_ser.Latitude, src_ser.Longitude
 
-# Hard-coded for Yasur, UTM zone 59S
-YASUR_CRS = CRS(32759)
-
 # Define [gridline-registered] grid of receiver locations
 SPACING = 100  # [m]
-XLIM = (336000, 338200)  # [m] in YASUR_CRS
-YLIM = (7839200, 7840600)  # [m] in YASUR_CRS
-
-# Converting gridline registration to pixel registration below
-xvec = np.arange(XLIM[0] + SPACING / 2, XLIM[1] + SPACING / 2, SPACING)
-yvec = np.arange(YLIM[0] + SPACING / 2, YLIM[1] + SPACING / 2, SPACING)
-xgrid, ygrid = np.meshgrid(xvec, yvec)
-
-# Convert "receiver" UTM coordinates to lat/lon
-proj = Transformer.from_crs(YASUR_CRS, YASUR_CRS.geodetic_crs)
-rec_lat, rec_lon = proj.transform(xgrid, ygrid)
+XLIM = (336000, 338200)  # [m] UTM zone 59S
+YLIM = (7839200, 7840600)  # [m] UTM zone 59S
 
 #%% Calculate travel time delay grid
 
-tic = time.time()
-
-path_length_differences = calculate_paths(
+path_length_differences, dem = calculate_paths_grid(
     src_lat=src_lat,
     src_lon=src_lon,
-    rec_lat=rec_lat.flatten(),
-    rec_lon=rec_lon.flatten(),
+    radius=1800,  # Hardcoded to fully encompass Fig. 2B (TODO: Implement custom extent?)
+    spacing=SPACING,
     dem_file=DEM_FILE,
 )
 
-toc = time.time()
-print(f'\nElapsed time = {toc - tic:.0f} s')
-
-travel_time_delays = np.reshape(path_length_differences / CELERITY, rec_lat.shape)
+travel_time_delays = path_length_differences.data / CELERITY
 
 #%% Plot travel time delay grid
 
 # Convert from pixel registration back to gridline registration for plotting
-xvec_plot = np.hstack([xvec, xvec[-1] + SPACING]) - SPACING / 2
-yvec_plot = np.hstack([yvec, yvec[-1] + SPACING]) - SPACING / 2
+xvec, yvec = path_length_differences.x, path_length_differences.y
+spacing = path_length_differences.spacing
+xvec_plot = np.hstack([xvec, xvec[-1] + spacing]) - spacing / 2
+yvec_plot = np.hstack([yvec, yvec[-1] + spacing]) - spacing / 2
 
 # Make grid corner (0, 0) by applying this simple transform function
-transform = lambda x, y: (x - xvec_plot.min(), y - yvec_plot.min())
+transform = lambda x, y: (x - XLIM[0], y - YLIM[0])
 
 fig, ax = plt.subplots(figsize=(8, 4))
+hs = dem.copy()
+hs.data = matplotlib.colors.LightSource().hillshade(
+    dem.data,
+    dx=abs(dem.x.diff('x').mean().values),
+    dy=abs(dem.y.diff('y').mean().values),
+)
+hs['x'], hs['y'] = transform(hs.x, hs.y)
+hs.plot.imshow(ax=ax, cmap='Greys_r', add_colorbar=False)
 im = ax.pcolormesh(
     *transform(xvec_plot, yvec_plot),
     travel_time_delays,
     cmap='magma_r',
     shading='flat',
     # vmax=0.42,  # Match Fig. 2B in Fee et al. (2021)
+    alpha=0.8,
 )
-src_utm = proj.transform(src_lat, src_lon, direction='INVERSE')
+utm_crs = CRS(path_length_differences.rio.crs)
+proj = Transformer.from_crs(utm_crs.geodetic_crs, utm_crs)
+src_utm = proj.transform(src_lat, src_lon)
 ax.scatter(*transform(*src_utm), s=180, marker='v', color='black', lw=0, zorder=2)
 ax.text(
     *transform(src_utm[0], src_utm[1] + 5),  # [m] Shifting text here
@@ -95,7 +91,9 @@ ax.text(
     weight='bold',
     zorder=2,
 )
-ax.set_title(f'{SPACING} m spacing — {toc - tic:.0f} s')
+ax.set_title(f'{SPACING} m spacing')
+ax.set_xlim(0, np.diff(XLIM)[0])
+ax.set_ylim(0, np.diff(YLIM)[0])
 ax.grid(linestyle=':', alpha=0.5)
 ax.set_aspect('equal')
 ax.set_xlabel('X (m)')

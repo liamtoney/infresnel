@@ -3,8 +3,8 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - jupyterlab
 #  - matplotlib  # OPTIONAL, for plotting
+  - notebook
   - numba
   - pip
   - pygmt

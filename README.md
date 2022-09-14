@@ -1,6 +1,6 @@
 # *infresnel*
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/liamtoney/infresnel/HEAD?labpath=example_yasur.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/liamtoney/infresnel/HEAD?labpath=notebooks)
 
 *infresnel* is a Python package which facilitates computation of the
 [Fresnel number](https://en.wikipedia.org/wiki/Fresnel_number) for
@@ -57,14 +57,20 @@ this computation as quick and convenient as possible.
 
 ## Usage
 
-🚧 **Detailed documentation is forthcoming!** For now, check out the docstring for
-`calculate_paths()` in [`infresnel/infresnel.py`](infresnel/infresnel.py), and see
-[`example_yasur.ipynb`](example_yasur.ipynb) for a usage example.
+🚧 **Detailed documentation is forthcoming!** For now, check out the docstrings for
+`calculate_paths()` and `calculate_paths_grid()` in
+[`infresnel/infresnel.py`](infresnel/infresnel.py), and see the interactive notebooks in
+[`notebooks`](notebooks) for usage examples.
+
+To open the notebooks, with your conda environment activated run
+```
+jupyter notebook notebooks
+```
 
 ## Installation details
 
 *infresnel*'s dependencies are
-[JupyterLab](https://jupyterlab.readthedocs.io/en/stable/) (for running the interactive
+[Jupyter Notebook](https://jupyter.org/) (for running the interactive
 `.ipynb` notebooks), [Numba](https://numba.pydata.org/) (for computational
 acceleration), [PyGMT](https://www.pygmt.org/latest/) (for simplified SRTM data
 downloading and caching), and [rioxarray](https://corteva.github.io/rioxarray/stable/)
@@ -87,9 +93,9 @@ In either case, your installation will be "editable." This means that you can mo
 source code in your local `infresnel` directory — or run a `git pull` to update with
 any new remote changes — and the installed package will be updated.
 
-To additionally install *infresnel*'s development packages, run
+To additionally install *infresnel*'s development packages, with your conda environment
+activated run
 ```
-conda activate <environment_with_infresnel_installed>
 pip install --requirement requirements.txt
 ```
 
