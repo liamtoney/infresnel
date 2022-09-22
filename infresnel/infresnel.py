@@ -132,7 +132,7 @@ def calculate_paths(
 
         # Determine # of points in profile
         dist = np.linalg.norm([src_x - rec_x, src_y - rec_y])
-        n = int(np.ceil(dist / target_spacing))
+        n = max(int(np.ceil(dist / target_spacing)), 2)  # Ensure at least 2 points!
 
         # Make profile by evaluating spline
         xvec = np.linspace(src_x, rec_x, n)
