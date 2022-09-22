@@ -4,6 +4,7 @@ channels:
   - defaults
 dependencies:
 #  - matplotlib  # OPTIONAL, for plotting
+  - colorcet
   - notebook
   - numba
   - pip

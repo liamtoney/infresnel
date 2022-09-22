@@ -9,7 +9,7 @@ from pyproj import Transformer
 from rasterio.enums import Resampling
 from scipy.interpolate import RectBivariateSpline
 
-from ._georeference import _estimate_utm_crs
+from ._georeference import _estimate_utm_crs, _export_geotiff
 from ._path import (
     _direct_path,
     _horizontal_distance,
@@ -189,7 +189,9 @@ def calculate_paths(
         return np.array([ds.path_length_difference for ds in ds_list])
 
 
-def calculate_paths_grid(src_lat, src_lon, radius, spacing, dem_file=None):
+def calculate_paths_grid(
+    src_lat, src_lon, radius, spacing, dem_file=None, output_file=None
+):
     """Calculate paths for a UTM-projected grid surrounding a source location.
 
     Wrapper around :func:`calculate_paths` for computing path difference grids. See the
@@ -205,6 +207,9 @@ def calculate_paths_grid(src_lat, src_lon, radius, spacing, dem_file=None):
         radius (int or float): [m] Desired grid radius, measured from source location
         spacing (int or float): [m] Desired grid spacing
         dem_file (str or None): Path to DEM file (if `None`, then SRTM data are used)
+        output_file (str or None): If a string filepath is provided, then an RGB GeoTIFF
+            file containing the colormapped grid of path length difference values is
+            exported to this filepath (no export if `None`)
 
     Returns:
         tuple:  Tuple of the form ``(path_length_differences, dem)`` where
@@ -254,5 +259,10 @@ def calculate_paths_grid(src_lat, src_lon, radius, spacing, dem_file=None):
         attrs=dict(spacing=spacing, **units),
     ).transpose()
     path_length_differences.rio.write_crs(utm_crs, inplace=True)
+
+    # Export GeoTIFF if requested
+    if output_file is not None:
+        print()
+        _export_geotiff(path_length_differences, filename=output_file)
 
     return path_length_differences, dem

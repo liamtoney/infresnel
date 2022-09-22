@@ -69,8 +69,9 @@ jupyter notebook notebooks
 
 ## Installation details
 
-*infresnel*'s dependencies are
-[Jupyter Notebook](https://jupyter.org/) (for running the interactive
+*infresnel*'s dependencies are [colorcet](https://colorcet.holoviz.org/) (for
+perceptually accurate colormaps to use in the creation of GeoTIFF path length difference
+grids), [Jupyter Notebook](https://jupyter.org/) (for running the interactive
 `.ipynb` notebooks), [Numba](https://numba.pydata.org/) (for computational
 acceleration), [PyGMT](https://www.pygmt.org/latest/) (for simplified SRTM data
 downloading and caching), and [rioxarray](https://corteva.github.io/rioxarray/stable/)
