@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import pygmt
 import xarray as xr
-from pyproj import CRS, Transformer
+from pyproj import Transformer
 from rasterio.enums import Resampling
 from scipy.interpolate import RectBivariateSpline
 
