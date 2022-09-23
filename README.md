@@ -97,6 +97,7 @@ To additionally install *infresnel*'s development packages, with your conda envi
 activated run
 ```
 pip install --requirement requirements.txt
+nbdime config-git --enable --global  # Configure Jupyter Notebook diffs
 ```
 
 ## References
