@@ -71,14 +71,14 @@ jupyter notebook notebooks
 
 *infresnel*'s dependencies are [colorcet](https://colorcet.holoviz.org/) (for
 perceptually accurate colormaps to use in the creation of GeoTIFF path length difference
-grids), [Jupyter Notebook](https://jupyter.org/) (for running the interactive
-`.ipynb` notebooks), [Numba](https://numba.pydata.org/) (for computational
-acceleration), [PyGMT](https://www.pygmt.org/latest/) (for simplified SRTM data
-downloading and caching), and [rioxarray](https://corteva.github.io/rioxarray/stable/)
+grids), [Matplotlib](https://matplotlib.org/) (for applying colormaps to GeoTIFFs and
+for generally plotting results), [Jupyter Notebook](https://jupyter.org/)
+(for running the interactive `.ipynb` notebooks), [Numba](https://numba.pydata.org/)
+(for computational acceleration), [PyGMT](https://www.pygmt.org/latest/) (for simplified
+SRTM data downloading and caching), and [rioxarray](https://corteva.github.io/rioxarray/stable/)
 (for DEM file I/O, reprojection, and elevation profile interpolation). These
 dependencies are listed in [`environment.yml`](environment.yml), and they are
-installed in step 2 above. Note that [Matplotlib](https://matplotlib.org/) is an
-optional dependency; it's used only for plotting.
+installed in step 2 above.
 
 You might want to install *infresnel* into an existing
 [conda](https://docs.conda.io/en/latest/) environment, instead of making a new one. In

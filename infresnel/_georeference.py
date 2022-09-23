@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import colorcet as cc
+import matplotlib.pyplot as plt
 import numpy as np
 import xarray as xr
 from pyproj import CRS
@@ -33,8 +34,7 @@ def _export_geotiff(grid, filename, cmap=cc.m_fire_r):
     filename = Path(filename).expanduser().resolve()
 
     # Map grid values to full colormap (no clipping!), drop alpha, and convert datatype
-    grid_norm = (grid - grid.min()) / (grid.max() - grid.min())
-    color_data = cmap(grid_norm.data)[:, :, :-1]
+    color_data = cmap(plt.Normalize()(grid.data))[:, :, :-1]
     color_data = (color_data * np.iinfo(BYTE).max).astype(BYTE)
 
     # Form RGB DataArray

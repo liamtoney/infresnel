@@ -5,17 +5,8 @@ path difference time delays.
 TODO: Make this into a proper testing file for use with pytest...
 """
 
-# We need Matplotlib, which is an optional dependency - so we install here if needed
-# fmt: off
-try:
-    import matplotlib
-    import matplotlib.pyplot as plt
-except ModuleNotFoundError:
-    import subprocess
-    subprocess.run(['pip', 'install', 'matplotlib'])
-    import matplotlib
-    import matplotlib.pyplot as plt
-# fmt: on
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pyproj import CRS, Transformer
