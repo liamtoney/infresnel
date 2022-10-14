@@ -127,7 +127,7 @@ def calculate_paths(
     # Iterate over all receivers (= source-receiver pairs), calculating paths
     ds_list = []
     counter = 0
-    print(f'Computing {rec_lats.size} paths...')
+    print(f'Computing {rec_lats.size} path{"" if rec_lats.size == 1 else "s"}...')
     for rec_x, rec_y in zip(rec_xs, rec_ys):
 
         # Determine # of points in profile
