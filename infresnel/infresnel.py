@@ -8,6 +8,7 @@ import xarray as xr
 from pyproj import Transformer
 from rasterio.enums import Resampling
 from scipy.interpolate import RectBivariateSpline
+from tqdm.contrib import tzip
 
 from ._georeference import _estimate_utm_crs, _export_geotiff
 from ._path import (
@@ -126,9 +127,16 @@ def calculate_paths(
 
     # Iterate over all receivers (= source-receiver pairs), calculating paths
     ds_list = []
-    counter = 0
     print(f'Computing {rec_lats.size} path{"" if rec_lats.size == 1 else "s"}...')
-    for rec_x, rec_y in zip(rec_xs, rec_ys):
+    if rec_lats.size == 1:
+        rec_zip = zip(rec_xs, rec_ys)  # Don't create progress bar if only 1 path
+    else:
+        rec_zip = tzip(
+            rec_xs,
+            rec_ys,
+            bar_format='{percentage:3.0f}% |{bar}| {n_fmt}/{total_fmt} paths ',
+        )
+    for rec_x, rec_y in rec_zip:
 
         # Determine # of points in profile
         dist = np.linalg.norm([src_x - rec_x, src_y - rec_y])
@@ -175,10 +183,6 @@ def calculate_paths(
         )
         ds.rio.write_crs(utm_crs, inplace=True)
         ds_list.append(ds)
-
-        # Print progress
-        counter += 1
-        print('{:.0f}%'.format((counter / rec_lats.size) * 100), end='\r')
 
     print('Done')
 

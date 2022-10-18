@@ -4,11 +4,13 @@ channels:
   - defaults
 dependencies:
   - colorcet
+  - ipywidgets
   - matplotlib
   - notebook
   - numba
   - pip
   - pygmt
   - rioxarray
+  - tqdm
   - pip:
     - --editable .
