@@ -102,6 +102,15 @@ pip install --requirement requirements.txt
 nbdime config-git --enable  # Configure Jupyter Notebook diffs
 ```
 
+## Contributing
+
+If you notice a bug with *infresnel* (or if you'd like to request/propose a new
+feature), please
+[create an issue on GitHub](https://github.com/liamtoney/infresnel/issues/new)
+(preferred) or email me at [`liam@liam.earth`](mailto:liam@liam.earth). You are also
+welcome to create a
+[pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests).
+
 ## References
 
 Fee, D., Toney, L., Kim, K., Sanderson, R. W., Iezzi, A. M., Matoza, R. S., De Angelis,
