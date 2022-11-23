@@ -2,14 +2,6 @@
 ===========
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :caption: API Reference
 
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   api/infresnel.rst

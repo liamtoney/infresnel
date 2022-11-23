@@ -1,25 +1,20 @@
-# Configuration file for the Sphinx documentation builder.
+# import sys
+# from pathlib import Path
 #
-# For the full list of built-in configuration values, see the documentation:
-# https://www.sphinx-doc.org/en/master/usage/configuration.html
-
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
+# sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 project = 'infresnel'
 copyright = '2022, Liam Toney'
 author = 'Liam Toney'
 
-# -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
-
-extensions = []
+extensions = ['sphinx.ext.autodoc', 'sphinxcontrib.apidoc', 'sphinx.ext.napoleon']
 
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
-
-
-# -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
 html_theme = 'sphinx_rtd_theme'
+
+apidoc_module_dir = '../infresnel'
+
+apidoc_toc_file = False  # Don't create a table of contents file (modules.rst)
+
+napoleon_numpy_docstring = False  # We are using Google docstring style
