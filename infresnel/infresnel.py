@@ -46,7 +46,7 @@ def calculate_paths(
             just the path length differences
 
     Returns:
-        If `full_output` is `False` — a :class:`~numpy.ndarray` of path length differences [m],
+        If `full_output` is `False` — an :class:`~numpy.ndarray` of path length differences [m],
         one per source-receiver pair
 
         If `full_output` is `True` — a tuple of the form ``(ds_list, dem)`` where
