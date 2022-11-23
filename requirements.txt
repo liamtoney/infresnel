@@ -3,3 +3,4 @@
 black[jupyter]
 isort
 nbdime
+sphinx

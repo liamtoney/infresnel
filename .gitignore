@@ -2,6 +2,7 @@
 /infresnel.egg-info/
 /notebooks/DEM_WGS84_resampled.tif
 /notebooks/semi.tiff
+/doc/_build/
 /.gitattributes
 .ipynb_checkpoints/
 .DS_Store
