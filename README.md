@@ -113,3 +113,8 @@ https://doi.org/10.3389/feart.2021.620813
 Maher, S. P., Matoza, R. S., de Groot-Hedlin, C., Kim, K., & Gee, K. L. (2021).
 Evaluating the applicability of a screen diffraction approximation to local volcano
 infrasound. *Volcanica*, *4*(1), 67–85. https://doi.org/10.30909/vol.04.01.6785
+
+## Acknowledgements
+
+This work was supported by the Nuclear Arms Control Technology (NACT) program at the
+Defense Threat Reduction Agency (DTRA). Cleared for release.
