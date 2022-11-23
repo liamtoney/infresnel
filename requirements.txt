@@ -4,3 +4,4 @@ black[jupyter]
 isort
 nbdime
 sphinx
+sphinx-rtd-theme
