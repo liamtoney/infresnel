@@ -1,6 +1,6 @@
 /.idea/
 /infresnel.egg-info/
-/notebooks/DEM_WGS84.tif
+/notebooks/DEM_WGS84_resampled.tif
 /notebooks/semi.tiff
 /.gitattributes
 .ipynb_checkpoints/
