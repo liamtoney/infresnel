@@ -19,7 +19,7 @@ apidoc_module_dir = '../infresnel'
 apidoc_toc_file = False  # Don't create a table of contents file (modules.rst)
 apidoc_separate_modules = True  # Give submodules their own page
 
-autodoc_mock_imports = ['numpy', 'pandas']
+autodoc_mock_imports = ['numpy', 'pandas', 'pygmt']
 
 napoleon_numpy_docstring = False  # We are using Google docstring style
 
