@@ -21,6 +21,7 @@ apidoc_separate_modules = True  # Give submodules their own page
 
 autodoc_mock_imports = [
     'colorcet',
+    'matplotlib',
     'numpy',
     'pandas',
     'pygmt',
