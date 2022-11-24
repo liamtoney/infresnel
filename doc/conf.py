@@ -20,6 +20,7 @@ apidoc_toc_file = False  # Don't create a table of contents file (modules.rst)
 apidoc_separate_modules = True  # Give submodules their own page
 
 autodoc_mock_imports = [
+    'colorcet',
     'numpy',
     'pandas',
     'pygmt',
