@@ -1,9 +1,5 @@
-*infresnel*
-===========
+*infresnel* — API Reference
+===========================
 
-Computation of the Fresnel number for infrasound applications
-
-.. toctree::
-   :caption: API Reference
-
-   api/infresnel.rst
+.. automodule:: infresnel.infresnel
+   :members:
