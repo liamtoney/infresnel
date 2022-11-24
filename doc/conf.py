@@ -26,6 +26,7 @@ autodoc_mock_imports = [
     'pyproj',
     'rasterio',
     'scipy',
+    'tqdm',
     'xarray',
 ]
 
