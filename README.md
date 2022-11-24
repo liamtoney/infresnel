@@ -57,15 +57,18 @@ this computation as quick and convenient as possible.
 
 ## Usage
 
-🚧 **Detailed documentation is forthcoming!** For now, check out the docstrings for
-`calculate_paths()` and `calculate_paths_grid()` in
-[`infresnel/infresnel.py`](infresnel/infresnel.py), and see the interactive notebooks in
-[`notebooks`](notebooks) for usage examples.
+Interactive API reference documentation for *infresnel* can be found
+[here](https://infresnel.rtfd.io/).
 
-To open the notebooks, with your conda environment activated run
+Additionally, several interactive notebooks containing usage examples are
+included in [`notebooks`](notebooks). To open the notebooks, with your conda
+environment activated run
 ```
 jupyter notebook notebooks
 ```
+Alternatively, you can run these notebooks in your browser — without installing
+*infresnel* — by navigating to the project's
+[Binder](https://mybinder.org/v2/gh/liamtoney/infresnel/HEAD).
 
 ## Installation details
 
