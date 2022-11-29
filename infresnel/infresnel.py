@@ -194,7 +194,7 @@ def calculate_paths(
 
 
 def calculate_paths_grid(
-    src_lat, src_lon, radius, spacing, dem_file=None, output_file=None
+    src_lat, src_lon, x_radius, y_radius, spacing, dem_file=None, output_file=None
 ):
     """Calculate paths for a UTM-projected grid surrounding a source location.
 
@@ -208,7 +208,12 @@ def calculate_paths_grid(
     Args:
         src_lat (int or float): Source latitude
         src_lon (int or float): Source longitude
-        radius (int or float): [m] Desired grid radius, measured from source location
+        x_radius (int, float, list, or tuple): [m] Desired grid radius in
+            :math:`x`-direction, measured from source location (specify a two-element
+            array for different west and east extents)
+        y_radius (int, float, list, or tuple): [m] Desired grid radius in
+            :math:`y`-direction, measured from source location (specify a two-element
+            array for different south and north extents)
         spacing (int or float): [m] Desired grid spacing
         dem_file (str or None): Path to DEM file (if `None`, then SRTM data are used)
         output_file (str or None): If a string filepath is provided, then an RGB GeoTIFF
@@ -229,9 +234,22 @@ def calculate_paths_grid(
     proj = Transformer.from_crs(utm_crs, utm_crs.geodetic_crs)
     src_x, src_y = proj.transform(src_lat, src_lon, direction='INVERSE')
 
+    # Function for pre-processing radii arguments
+    def _process_radius(radius):
+        radius = np.atleast_1d(radius)
+        if radius.size == 1:
+            radius = radius.repeat(2)
+        elif radius.size == 2:
+            pass  # We already have a two-element array!
+        else:
+            raise ValueError('x_radius and y_radius each take only one or two values!')
+        return radius
+
     # Define [gridline-registered] grid of receiver locations [m]
-    xlim = (src_x - radius, src_x + radius)
-    ylim = (src_y - radius, src_y + radius)
+    x_radius = _process_radius(x_radius)
+    y_radius = _process_radius(y_radius)
+    xlim = (src_x - x_radius[0], src_x + x_radius[1])
+    ylim = (src_y - y_radius[0], src_y + y_radius[1])
 
     # Convert gridline registration to pixel registration
     xvec = np.arange(xlim[0] + spacing / 2, xlim[1] + spacing / 2, spacing)
