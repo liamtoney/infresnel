@@ -25,15 +25,16 @@ src_lat, src_lon = src_ser.Latitude, src_ser.Longitude
 
 # Define [gridline-registered] grid of receiver locations
 SPACING = 100  # [m]
-XLIM = (336000, 338200)  # [m] UTM zone 59S
-YLIM = (7839200, 7840600)  # [m] UTM zone 59S
+X_RADIUS = (450, 1750)  # [m] Hardcoded to match Fig. 2B
+Y_RADIUS = (1200, 200)  # [m] "                        "
 
 #%% Calculate travel time delay grid
 
 path_length_differences, dem = calculate_paths_grid(
     src_lat=src_lat,
     src_lon=src_lon,
-    radius=1800,  # Hardcoded to fully encompass Fig. 2B (TODO: Implement custom extent?)
+    x_radius=X_RADIUS,
+    y_radius=Y_RADIUS,
     spacing=SPACING,
     dem_file=DEM_FILE,
 )
@@ -46,10 +47,10 @@ travel_time_delays = path_length_differences.data / CELERITY
 xvec, yvec = path_length_differences.x, path_length_differences.y
 spacing = path_length_differences.spacing
 xvec_plot = np.hstack([xvec, xvec[-1] + spacing]) - spacing / 2
-yvec_plot = np.hstack([yvec, yvec[-1] + spacing]) - spacing / 2
+yvec_plot = np.hstack([yvec, yvec[-1] - spacing]) + spacing / 2  # Note sign change!
 
 # Make grid corner (0, 0) by applying this simple transform function
-transform = lambda x, y: (x - XLIM[0], y - YLIM[0])
+transform = lambda x, y: (x - xvec_plot.min(), y - yvec_plot.min())
 
 fig, ax = plt.subplots(figsize=(8, 4))
 hs = dem.copy()
@@ -83,8 +84,8 @@ ax.text(
     zorder=2,
 )
 ax.set_title(f'{SPACING} m spacing')
-ax.set_xlim(0, np.diff(XLIM)[0])
-ax.set_ylim(0, np.diff(YLIM)[0])
+ax.set_xlim(0, xvec_plot.max() - xvec_plot.min())
+ax.set_ylim(0, yvec_plot.max() - yvec_plot.min())
 ax.grid(linestyle=':', alpha=0.5)
 ax.set_aspect('equal')
 ax.set_xlabel('X (m)')
