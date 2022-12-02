@@ -97,7 +97,13 @@ if you don't already have them installed in your existing environment.
 
 In either case, your installation will be "editable." This means that you can modify the
 source code in your local `infresnel` directory — or run a `git pull` to update with
-any new remote changes — and the installed package will be updated.
+any new remote changes — and the installed package will be updated. To instead use a
+[specific release](https://github.com/liamtoney/infresnel/releases) of *infresnel*, run
+```
+git switch -d vX.Y.Z
+```
+between steps 1 and 2, where `vX.Y.Z` is the release version (e.g., `v0.1.0`). You can
+switch back with `git switch main`.
 
 To additionally install *infresnel*'s development packages, with your conda environment
 activated run
