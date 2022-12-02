@@ -6,3 +6,4 @@ nbdime
 sphinx
 sphinx-rtd-theme
 sphinxcontrib-apidoc
+versioneer
