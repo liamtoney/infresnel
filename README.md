@@ -115,13 +115,6 @@ git switch -d vX.Y.Z
 between steps 1 and 2, where `vX.Y.Z` is the release version (e.g., `v0.1.0`). You can
 switch back with `git switch main`.
 
-To additionally install *infresnel*'s development packages, with your conda environment
-activated run
-```
-pip install --requirement requirements.txt
-nbdime config-git --enable  # Configure Jupyter Notebook diffs
-```
-
 ## Contributing
 
 If you notice a bug with *infresnel* (or if you'd like to request/propose a new
@@ -130,6 +123,13 @@ feature), please
 (preferred) or email me at [`liam@liam.earth`](mailto:liam@liam.earth). You are also
 welcome to create a
 [pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests).
+
+To install *infresnel*'s development packages, with your conda environment
+activated run
+```
+pip install --requirement requirements.txt
+nbdime config-git --enable  # Configure Jupyter Notebook diffs
+```
 
 ## References
 
