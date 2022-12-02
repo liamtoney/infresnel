@@ -1,5 +1,7 @@
 from setuptools import find_packages, setup
 
+import versioneer
+
 setup(
     name='infresnel',
     packages=find_packages(),
@@ -13,4 +15,6 @@ setup(
         'rioxarray',
         'tqdm',
     ],
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
 )
