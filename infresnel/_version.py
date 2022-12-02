@@ -43,7 +43,7 @@ def get_config():
     cfg = VersioneerConfig()
     cfg.VCS = "git"
     cfg.style = ""
-    cfg.tag_prefix = ""
+    cfg.tag_prefix = "v"
     cfg.parentdir_prefix = "None"
     cfg.versionfile_source = "infresnel/_version.py"
     cfg.verbose = False
