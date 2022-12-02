@@ -71,6 +71,16 @@ Alternatively, you can run these notebooks in your browser — without installin
 *infresnel* — by navigating to the project's
 [Binder](https://mybinder.org/v2/gh/liamtoney/infresnel/HEAD).
 
+## Citing
+
+If you use *infresnel* in research that leads to a published manuscript, please
+cite the tool:
+> Toney, L. (2022). *infresnel* (v0.1.0). Zenodo. https://doi.org/10.5281/zenodo.7388646
+
+To cite a previous version of *infresnel*, go to the
+[Zenodo page](https://doi.org/10.5281/zenodo.7388645), select the version, and use the
+"Cite as" tool there.
+
 ## Installation details
 
 *infresnel*'s dependencies are [colorcet](https://colorcet.holoviz.org/) (for
