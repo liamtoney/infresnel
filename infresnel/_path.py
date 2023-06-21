@@ -29,7 +29,6 @@ def _direct_path(d, z):
 # [Recursively] compute SHORTEST DIFFRACTED path
 @njit
 def _shortest_diffracted_path(d, z):
-
     # Compute the direct path
     direct_path = _direct_path(d, z)
 

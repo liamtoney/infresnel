@@ -28,7 +28,7 @@ SPACING = 100  # [m]
 X_RADIUS = (450, 1750)  # [m] Hardcoded to match Fig. 2B
 Y_RADIUS = (1200, 200)  # [m] "                        "
 
-#%% Calculate travel time delay grid
+# %% Calculate travel time delay grid
 
 path_length_differences, dem = calculate_paths_grid(
     src_lat=src_lat,
@@ -41,7 +41,7 @@ path_length_differences, dem = calculate_paths_grid(
 
 travel_time_delays = path_length_differences.data / CELERITY
 
-#%% Plot travel time delay grid
+# %% Plot travel time delay grid
 
 # Convert from pixel registration back to gridline registration for plotting
 xvec, yvec = path_length_differences.x, path_length_differences.y

@@ -11,6 +11,7 @@ from pyproj.database import query_utm_crs_info
 # GeoTIFF datatype must be "byte" for Google Earth
 BYTE = np.ubyte
 
+
 # Find UTM CRS of a (lat, lon) point (see https://gis.stackexchange.com/a/423614)
 def _estimate_utm_crs(lat, lon, datum_name='WGS 84'):
     utm_crs_list = query_utm_crs_info(
@@ -27,7 +28,6 @@ def _estimate_utm_crs(lat, lon, datum_name='WGS 84'):
 
 # Export a DataArray grid as an RGB GeoTIFF
 def _export_geotiff(grid, filename, cmap=cc.m_fire_r):
-
     # Process filepath
     if not (filename.endswith('.tif') or filename.endswith('.tiff')):
         filename += '.tiff'

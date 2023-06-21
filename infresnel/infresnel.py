@@ -137,7 +137,6 @@ def calculate_paths(
             bar_format='{percentage:3.0f}% |{bar}| {n_fmt}/{total_fmt} paths ',
         )
     for rec_x, rec_y in rec_zip:
-
         # Determine # of points in profile
         dist = np.linalg.norm([src_x - rec_x, src_y - rec_y])
         n = max(int(np.ceil(dist / target_spacing)), 2)  # Ensure at least 2 points!
