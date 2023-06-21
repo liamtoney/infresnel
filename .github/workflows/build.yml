@@ -1,0 +1,30 @@
+name: build
+on:
+  push:
+    paths-ignore:
+    - doc/**
+    - .gitignore
+    - LICENSE.txt
+    - README.md
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'
+jobs:
+  install-and-test:
+    runs-on: macos-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up conda environment
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          activate-environment: infresnel
+          environment-file: environment.yml
+      - name: Install development packages
+        run: pip install --requirement requirements.txt
+      - name: Check formatting
+        run: |
+          black --skip-string-normalization --check .
+          isort --conda-env infresnel --check-only .
