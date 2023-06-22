@@ -22,6 +22,8 @@ jobs:
         with:
           activate-environment: infresnel
           environment-file: environment.yml
+          miniforge-variant: Mambaforge
+          use-mamba: true
       - name: Install development packages
         run: pip install --requirement requirements.txt
       - name: Check formatting
