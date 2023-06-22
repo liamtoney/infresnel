@@ -11,8 +11,12 @@ from scipy.interpolate import RectBivariateSpline
 from tqdm.contrib import tzip
 
 from ._georeference import _estimate_utm_crs, _export_geotiff
-from ._path import (_direct_path, _horizontal_distance, _path_length,
-                    _shortest_diffracted_path)
+from ._path import (
+    _direct_path,
+    _horizontal_distance,
+    _path_length,
+    _shortest_diffracted_path,
+)
 
 
 def calculate_paths(

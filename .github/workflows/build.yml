@@ -27,4 +27,4 @@ jobs:
       - name: Check formatting
         run: |
           black --skip-string-normalization --check .
-          isort --conda-env infresnel --check-only .
+          isort --conda-env infresnel --profile black --check-only .
