@@ -5,7 +5,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 project = 'infresnel'
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.intersphinx', 'sphinx.ext.napoleon']
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.napoleon',
+    'sphinx.ext.viewcode',
+]
 
 html_theme = 'sphinx_rtd_theme'
 html_show_copyright = False
