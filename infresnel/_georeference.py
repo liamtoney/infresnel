@@ -45,3 +45,17 @@ def _export_geotiff(grid, filename, cmap=cc.m_fire_r):
     da.rio.write_crs(grid.rio.crs, inplace=True)
     da.rio.to_raster(filename, dtype=BYTE, tags=dict(AREA_OR_POINT='Point'))
     print(f'GeoTIFF saved to {filename}')
+
+
+# Check that a pair of UTM coordinates has a valid (not NaN!) elevation value in a UTM DEM
+def _check_valid_elevation_for_coords(dem, tolerance, x, y):
+    try:
+        # We're *inside* the DEM extent (non-rectangular DEM shapes still might not have
+        # a valid elevation value, though!)
+        queried_elevation = dem.sel(
+            x=x, y=y, method='nearest', tolerance=tolerance
+        ).data
+    except KeyError:
+        # We're *outside* the DEM extent
+        queried_elevation = np.nan
+    return not np.isnan(queried_elevation)  # Boolean is `True` for valid elevations!

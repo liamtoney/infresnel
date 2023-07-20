@@ -10,7 +10,11 @@ from rasterio.enums import Resampling
 from scipy.interpolate import RectBivariateSpline
 from tqdm.contrib import tzip
 
-from ._georeference import _estimate_utm_crs, _export_geotiff
+from ._georeference import (
+    _check_valid_elevation_for_coords,
+    _estimate_utm_crs,
+    _export_geotiff,
+)
 from ._path import (
     _direct_path,
     _horizontal_distance,
@@ -110,6 +114,17 @@ def calculate_paths(
     proj = Transformer.from_crs(utm_crs.geodetic_crs, utm_crs)
     src_x, src_y = proj.transform(src_lat, src_lon)
     rec_xs, rec_ys = proj.transform(rec_lats, rec_lons)
+
+    # Check that source and receiver(s) all have valid elevation values in DEM (this may
+    # get slow for large numbers of receivers?). Mainly relevant for user-supplied DEMs,
+    # but good to check this for all DEMs just in case.
+    print('Checking that DEM contains source and receivers...')
+    if not _check_valid_elevation_for_coords(dem_utm, mean_resolution, src_x, src_y):
+        raise ValueError('Source is not in DEM! Exiting.')
+    for i, (x, y) in enumerate(zip(rec_xs, rec_ys)):
+        if not _check_valid_elevation_for_coords(dem_utm, mean_resolution, x, y):
+            raise ValueError(f'Receiver (index {i}) is not in DEM! Exiting.')
+    print('Done\n')
 
     # Fit bivariate spline to DEM (slow for very high resolution DEMs!)
     print('Fitting spline to DEM...')
