@@ -131,7 +131,7 @@ def calculate_paths(
     print('Fitting spline to DEM...')
     x = dem_utm.x
     y = dem_utm.y
-    z = dem_utm.fillna(0)  # Can't have NaNs in z
+    z = dem_utm.fillna(0)  # Can't have NaNs in z (TODO: Should this be << 0 instead?)
     if not pd.Series(x).is_monotonic_increasing:
         x = x[::-1]
         z = np.fliplr(z)
