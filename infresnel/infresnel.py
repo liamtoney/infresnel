@@ -18,6 +18,7 @@ from ._georeference import (
 from ._path import (
     _direct_path,
     _horizontal_distance,
+    _norm,
     _path_length,
     _shortest_diffracted_path,
 )
@@ -153,7 +154,7 @@ def calculate_paths(
         )
     for rec_x, rec_y in rec_zip:
         # Determine # of points in profile
-        dist = np.linalg.norm([src_x - rec_x, src_y - rec_y])
+        dist = _norm(src_x - rec_x, src_y - rec_y)
         n = max(int(np.ceil(dist / target_spacing)), 2)  # Ensure at least 2 points!
 
         # Make profile by evaluating spline
