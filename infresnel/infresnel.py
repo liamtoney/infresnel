@@ -126,8 +126,11 @@ def calculate_paths(
     for i, (x, y) in enumerate(zip(rec_xs, rec_ys)):
         if not _check_valid_elevation_for_coords(dem_utm, mean_resolution, x, y):
             compute_paths[i] = False  # Don't compute this path
-    if (~compute_paths).any():
-        print(f'Done — will skip {(~compute_paths).sum()} invalid path(s)\n')
+    n_invalid_paths = (~compute_paths).sum()
+    if n_invalid_paths > 0:
+        print(
+            f'Done — will skip {n_invalid_paths} invalid path{"" if n_invalid_paths == 1 else "s"}\n'
+        )
     else:
         print('Done\n')
 
@@ -147,7 +150,7 @@ def calculate_paths(
 
     # Iterate over all receivers (= source-receiver pairs), calculating paths
     ds_list = []
-    n_valid_paths = rec_xs[compute_paths].size
+    n_valid_paths = compute_paths.sum()
     print(f'Computing {n_valid_paths} path{"" if n_valid_paths == 1 else "s"}...')
     if n_valid_paths > 1:  # Only creating the progress bar if we have more than 1 path
         bar = tqdm(
