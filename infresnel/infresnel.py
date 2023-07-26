@@ -1,4 +1,6 @@
+import sys
 import time
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -103,6 +105,15 @@ def calculate_paths(
         dem_utm[coordinate].attrs = units
     print('Done\n')
 
+    # Evaluate presence of NaN values in DEM
+    if dem.isnull().all():
+        raise ValueError('DEM is entirely NaN values! Exiting.')
+    elif dem.isnull().any():
+        warnings.warn(
+            f'{dem.isnull().values.sum() / dem.size:.1%} of DEM is NaN!', stacklevel=2
+        )
+        sys.stderr.flush()
+
     # Determine target spacing of interpolated profiles from DEM spacing - decreasing
     # the spacing makes things slower! TODO: Is oversampling actually needed w/ spline interpolation?
     mean_resolution = np.abs(dem_utm.rio.resolution()).mean()
@@ -138,7 +149,7 @@ def calculate_paths(
     print('Fitting spline to DEM...')
     x = dem_utm.x
     y = dem_utm.y
-    z = dem_utm.fillna(0)  # Can't have NaNs in z (TODO: Should this be << 0 instead?)
+    z = dem_utm.fillna(dem_utm.median())  # Can't have NaNs in z
     if not pd.Series(x).is_monotonic_increasing:
         x = x[::-1]
         z = np.fliplr(z)
