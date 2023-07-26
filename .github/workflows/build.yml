@@ -34,3 +34,5 @@ jobs:
         run: |
           black --skip-string-normalization --check .
           isort --conda-env infresnel --profile black --check-only .
+      - name: Run tests
+        run: pytest --capture=no

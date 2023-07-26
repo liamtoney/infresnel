@@ -3,6 +3,7 @@
 black[jupyter]
 isort
 nbdime
+pytest
 sphinx
 sphinx-rtd-theme
 sphinxcontrib-apidoc
