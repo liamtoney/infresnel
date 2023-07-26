@@ -144,8 +144,8 @@ def calculate_paths(
 
     # Check that source and receiver(s) all have valid elevation values in DEM (this is
     # the "costly check" mentioned above). Mainly relevant for user-supplied DEMs... but
-    # also must be run if the PyGMT supplied DEM is not fully within SRTM range (kind of
-    # unlikely edge case). For most PyGMT supplied DEMs, this check will not end up
+    # also must be run if the PyGMT-supplied DEM is not fully within SRTM range (kind of
+    # unlikely edge case). For most PyGMT-supplied DEMs, this check will not end up
     # being run — which is good, since it can be SLOW.
     compute_paths = np.ones(rec_xs.size).astype(bool)  # By default, compute all paths
     if check_for_valid_elevations:
