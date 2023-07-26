@@ -92,6 +92,11 @@ def calculate_paths(
                 resolution='01s', region=region, use_srtm=True
             )
         dem.rio.write_crs(dem.horizontal_datum, inplace=True)
+        # PyGMT fills the "nodata" area with zeros, which is same as water. So we
+        # convert these areas to NaN here. See
+        # https://en.wikipedia.org/wiki/Shuttle_Radar_Topography_Mission for discussion
+        # of the data bounds of the SRTM data.
+        dem = dem.where((dem.lat < 60) & (dem.lat > -56))
 
     # Clean DEM before going further
     dem = dem.squeeze(drop=True).rename('elevation')
