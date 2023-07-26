@@ -11,9 +11,7 @@ from pyproj import CRS, Transformer
 
 from infresnel import calculate_paths_grid
 
-RUN_FULL_SCRIPT = (
-    True  # False  # Toggle running fully to make plot of travel time differences
-)
+RUN_FULL_SCRIPT = False  # Toggle running fully to make plot of travel time differences
 
 CELERITY = 343.5  # [m/s] From Fee et al. (2021)
 
