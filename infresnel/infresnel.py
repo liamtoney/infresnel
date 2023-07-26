@@ -1,4 +1,6 @@
+import sys
 import time
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -74,6 +76,8 @@ def calculate_paths(
         dem_file = Path(str(dem_file)).expanduser().resolve()
         assert dem_file.is_file(), 'dem_file does not exist!'
         dem = xr.open_dataarray(dem_file)
+        # User-provided DEM may not fully encompass source and receivers!
+        sufficient_extent_guaranteed = False
     else:
         # Get SRTM data using PyGMT, computing region (buffered by 5% in each direction)
         # based on provided source-receiver geometry (have to manually write the CRS for
@@ -90,6 +94,14 @@ def calculate_paths(
                 resolution='01s', region=region, use_srtm=True
             )
         dem.rio.write_crs(dem.horizontal_datum, inplace=True)
+        # PyGMT fills the "nodata" area with zeros, which is same as water. So we
+        # convert these areas to NaN here. See
+        # https://en.wikipedia.org/wiki/Shuttle_Radar_Topography_Mission for discussion
+        # of the data bounds of the SRTM data.
+        dem = dem.where((dem.lat < 60) & (dem.lat > -56))
+        dem.rio.write_nodata(np.nan, inplace=True)
+        # We know that this DEM fully encompasses source and receivers (by design)!
+        sufficient_extent_guaranteed = True
 
     # Clean DEM before going further
     dem = dem.squeeze(drop=True).rename('elevation')
@@ -102,6 +114,20 @@ def calculate_paths(
     for coordinate in 'x', 'y':
         dem_utm[coordinate].attrs = units
     print('Done\n')
+
+    # Evaluate presence of NaN values in DEM; determine if we need to run "costly check"
+    if dem.isnull().all():
+        raise ValueError('DEM is entirely NaN values! Exiting.')
+    elif dem.isnull().any():
+        warnings.warn(
+            f'{dem.isnull().values.sum() / dem.size:.1%} of DEM is NaN!', stacklevel=2
+        )
+        sys.stderr.flush()
+        check_for_valid_elevations = True  # Since we have NaNs in DEM, we should check
+    else:  # DEM values are all valid
+        # Even if the DEM is fully valid, for user-supplied DEMs the extent might not
+        # cover all sources and receivers, so in that case we still should check
+        check_for_valid_elevations = not sufficient_extent_guaranteed
 
     # Determine target spacing of interpolated profiles from DEM spacing - decreasing
     # the spacing makes things slower! TODO: Is oversampling actually needed w/ spline interpolation?
@@ -116,29 +142,34 @@ def calculate_paths(
     src_x, src_y = proj.transform(src_lat, src_lon)
     rec_xs, rec_ys = proj.transform(rec_lats, rec_lons)
 
-    # Check that source and receiver(s) all have valid elevation values in DEM (this may
-    # get slow for large numbers of receivers?). Mainly relevant for user-supplied DEMs,
-    # but good to check this for all DEMs just in case.
-    print('Checking that DEM contains source and receivers...')
-    if not _check_valid_elevation_for_coords(dem_utm, mean_resolution, src_x, src_y):
-        raise ValueError('Source is not in DEM! Exiting.')
+    # Check that source and receiver(s) all have valid elevation values in DEM (this is
+    # the "costly check" mentioned above). Mainly relevant for user-supplied DEMs... but
+    # also must be run if the PyGMT-supplied DEM is not fully within SRTM range (kind of
+    # unlikely edge case). For most PyGMT-supplied DEMs, this check will not end up
+    # being run — which is good, since it can be SLOW.
     compute_paths = np.ones(rec_xs.size).astype(bool)  # By default, compute all paths
-    for i, (x, y) in enumerate(zip(rec_xs, rec_ys)):
-        if not _check_valid_elevation_for_coords(dem_utm, mean_resolution, x, y):
-            compute_paths[i] = False  # Don't compute this path
-    n_invalid_paths = (~compute_paths).sum()
-    if n_invalid_paths > 0:
-        print(
-            f'Done — will skip {n_invalid_paths} invalid path{"" if n_invalid_paths == 1 else "s"}\n'
-        )
-    else:
-        print('Done\n')
+    if check_for_valid_elevations:
+        print('Checking that DEM contains source and receivers...')
+        if not _check_valid_elevation_for_coords(
+            dem_utm, mean_resolution, src_x, src_y
+        ):
+            raise ValueError('Source is not in DEM! Exiting.')
+        for i, (x, y) in enumerate(zip(rec_xs, rec_ys)):
+            if not _check_valid_elevation_for_coords(dem_utm, mean_resolution, x, y):
+                compute_paths[i] = False  # Don't compute this path
+        n_invalid_paths = (~compute_paths).sum()
+        if n_invalid_paths > 0:
+            print(
+                f'Done — will skip {n_invalid_paths} invalid path{"" if n_invalid_paths == 1 else "s"}\n'
+            )
+        else:
+            print('Done\n')
 
     # Fit bivariate spline to DEM (slow for very high resolution DEMs!)
     print('Fitting spline to DEM...')
     x = dem_utm.x
     y = dem_utm.y
-    z = dem_utm.fillna(0)  # Can't have NaNs in z (TODO: Should this be << 0 instead?)
+    z = dem_utm.fillna(dem_utm.median())  # Can't have NaNs in z
     if not pd.Series(x).is_monotonic_increasing:
         x = x[::-1]
         z = np.fliplr(z)
