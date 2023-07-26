@@ -33,12 +33,20 @@ def _export_geotiff(grid, filename, cmap=cc.m_fire_r):
         filename += '.tiff'
     filename = Path(filename).expanduser().resolve()
 
-    # Map grid values to full colormap (no clipping!), drop alpha, and convert datatype
-    color_data = cmap(plt.Normalize()(grid.data))[:, :, :-1]
+    # Map grid values to full colormap (no clipping!) and convert datatype
+    color_data = cmap(
+        plt.Normalize(vmin=np.nanmin(grid.data), vmax=np.nanmax(grid.data))(grid.data)
+    )
     color_data = (color_data * np.iinfo(BYTE).max).astype(BYTE)
 
+    # Drop alpha channel if there weren't any NaNs in the input `grid`
+    if not grid.isnull().any():
+        color_data = color_data[:, :, :-1]
+
     # Form RGB DataArray
-    da = xr.DataArray(color_data, coords=dict(y=grid.y, x=grid.x, band=range(3)))
+    da = xr.DataArray(
+        color_data, coords=dict(y=grid.y, x=grid.x, band=range(color_data.shape[2]))
+    )
     da = da.transpose('band', 'y', 'x')  # This order is required for export
 
     # Add CRS information and write to file
