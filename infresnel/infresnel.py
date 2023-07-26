@@ -97,6 +97,7 @@ def calculate_paths(
         # https://en.wikipedia.org/wiki/Shuttle_Radar_Topography_Mission for discussion
         # of the data bounds of the SRTM data.
         dem = dem.where((dem.lat < 60) & (dem.lat > -56))
+        dem.rio.write_nodata(np.nan, inplace=True)
 
     # Clean DEM before going further
     dem = dem.squeeze(drop=True).rename('elevation')
