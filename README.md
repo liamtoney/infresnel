@@ -75,7 +75,7 @@ Alternatively, you can run these notebooks in your browser — without installin
 
 If you use *infresnel* in research that leads to a published manuscript, please
 cite the tool:
-> Toney, L. (2022). *infresnel* (v0.1.0). Zenodo. https://doi.org/10.5281/zenodo.7388646
+> Toney, L. (2023). *infresnel* (v0.2.0). Zenodo. https://doi.org/10.5281/zenodo.8191058
 
 To cite a previous version of *infresnel*, go to the
 [Zenodo page](https://doi.org/10.5281/zenodo.7388645), select the version, and use the
