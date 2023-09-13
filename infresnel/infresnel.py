@@ -27,15 +27,21 @@ from ._path import (
 
 
 def calculate_paths(
-    src_lat, src_lon, rec_lat, rec_lon, dem_file=None, full_output=False
+    src_lat,
+    src_lon,
+    rec_lat,
+    rec_lon,
+    dem_file=None,
+    full_output=False,
+    return_dem=False,
 ):
     """Calculate elevation profiles, direct paths, and shortest diffracted paths.
 
     Paths are calculated for a given DEM (either a user-supplied `dem_file` or
     automatically downloaded 1 arc-second SRTM data) and an arbitrary number of
-    source-receiver pairs. By default, the function returns only the path length
-    differences. If `full_output` is set to `True`, then the complete path information
-    (lengths, coordinates, etc.) and the DEM used are returned.
+    source-receiver pairs. By default, the function returns only the direct and shortest
+    diffracted path lengths. If `full_output` is set to `True`, then complete path
+    information (lengths, coordinates, etc.) is returned.
 
     Note:
         Input coordinates are expected to be in the WGS 84 datum. DEM file vertical
@@ -49,16 +55,22 @@ def calculate_paths(
         rec_lon (int, float, list, tuple, or :class:`~numpy.ndarray`): One or more receiver
             longitudes
         dem_file (str or None): Path to DEM file (if `None`, then SRTM data are used)
-        full_output (bool): Toggle outputting full profile/path information and DEM, vs.
-            just the path length differences
+        full_output (bool): Toggle outputting full profile/path information vs. just
+            direct and shortest diffracted path lengths
+        return_dem (bool): Toggle additionally returning the UTM-projected DEM used to
+            compute the profiles
 
     Returns:
-        If `full_output` is `False` — an :class:`~numpy.ndarray` of path length differences [m],
-        one per source-receiver pair
+        If `full_output` is `False` — an :class:`~numpy.ndarray` with shape ``(2,
+        n_receivers)`` containing the direct path lengths [m] (first row) and shortest
+        diffracted path lengths [m] (second row) for each source-receiver pair.
 
-        If `full_output` is `True` — a tuple of the form ``(ds_list, dem)`` where
-        ``ds_list``  is a list of :class:`~xarray.Dataset` objects, one per source-receiver pair,
-        containing full profile and path information, and ``dem`` is a :class:`~xarray.DataArray`
+        If `full_output` is `True` — a list of :class:`~xarray.Dataset` objects, one per
+        source-receiver pair, containing full profile and path information
+
+        For either of the above cases, if `return_dem` is `True`, then the function
+        returns a tuple of the form ``(output_array, dem)`` where ``output_array``  is
+        the output described above, and ``dem`` is a :class:`~xarray.DataArray`
         containing the UTM-projected DEM used to compute the profiles
     """
 
@@ -180,7 +192,10 @@ def calculate_paths(
     print('Done\n')
 
     # Iterate over all receivers (= source-receiver pairs), calculating paths
-    ds_list = []
+    if full_output:
+        output_array = np.empty(rec_xs.size, dtype=object)  # For storing Datasets
+    else:
+        output_array = np.empty((2, rec_xs.size))  # For storing path lengths
     n_valid_paths = compute_paths.sum()
     print(f'Computing {n_valid_paths} path{"" if n_valid_paths == 1 else "s"}...')
     if n_valid_paths > 1:  # Only creating the progress bar if we have more than 1 path
@@ -188,7 +203,9 @@ def calculate_paths(
             total=n_valid_paths,
             bar_format='{percentage:3.0f}% |{bar}| {n_fmt}/{total_fmt} paths ',
         )
-    for rec_x, rec_y, compute_path in zip(rec_xs, rec_ys, compute_paths):
+    for i, (rec_x, rec_y, compute_path) in enumerate(
+        zip(rec_xs, rec_ys, compute_paths)
+    ):
         # If the DEM points were valid, compute the path
         if compute_path:
             # Determine # of points in profile
@@ -224,25 +241,32 @@ def calculate_paths(
             profile = direct_path = diff_path = [np.nan]
             direct_path_len = diff_path_len = np.nan
 
-        # Make nice Dataset of all info
-        ds = xr.Dataset(
-            {
-                'elevation': profile,
-                'direct_path': (
-                    'distance',
-                    direct_path,
-                    dict(length=direct_path_len, **units),
+        # Choose output format
+        if full_output:
+            # Make nice Dataset of all info
+            ds = xr.Dataset(
+                {
+                    'elevation': profile,
+                    'direct_path': (
+                        'distance',
+                        direct_path,
+                        dict(length=direct_path_len, **units),
+                    ),
+                    'diffracted_path': (
+                        'distance',
+                        diff_path,
+                        dict(length=diff_path_len, **units),
+                    ),
+                },
+                attrs=dict(
+                    path_length_difference=diff_path_len - direct_path_len, **units
                 ),
-                'diffracted_path': (
-                    'distance',
-                    diff_path,
-                    dict(length=diff_path_len, **units),
-                ),
-            },
-            attrs=dict(path_length_difference=diff_path_len - direct_path_len, **units),
-        )
-        ds.rio.write_crs(utm_crs, inplace=True)
-        ds_list.append(ds)
+            )
+            ds.rio.write_crs(utm_crs, inplace=True)
+            output_array[i] = ds
+        else:
+            # Just include the path lengths
+            output_array[:, i] = direct_path_len, diff_path_len
 
         if n_valid_paths > 1 and compute_path:
             bar.update()
@@ -252,9 +276,11 @@ def calculate_paths(
 
     # Determine what to output
     if full_output:
-        return ds_list, dem_utm
+        output_array = output_array.tolist()  # Convert to list of Datasets
+    if return_dem:
+        return output_array, dem_utm
     else:
-        return np.array([ds.path_length_difference for ds in ds_list])
+        return output_array
 
 
 def calculate_paths_grid(
@@ -325,21 +351,21 @@ def calculate_paths_grid(
 
     # Call calculate_paths()
     tic = time.time()
-    ds_list, dem = calculate_paths(
+    (direct_path_lens, diff_path_lens), dem = calculate_paths(
         src_lat=src_lat,
         src_lon=src_lon,
         rec_lat=rec_lat.flatten(),
         rec_lon=rec_lon.flatten(),
         dem_file=dem_file,
-        full_output=True,
+        return_dem=True,
     )
     toc = time.time()
     print(f'\nElapsed time = {toc - tic:.0f} s')
 
-    # Form a nicely-labeled DataArray from grid of path length differences
+    # Form a nicely-labeled DataArray grid of path length differences
     units = dict(units='m')
     path_length_differences = xr.DataArray(
-        np.reshape([ds.path_length_difference for ds in ds_list], rec_lat.shape).T,
+        np.reshape(diff_path_lens - direct_path_lens, rec_lat.shape).T,
         coords=[('x', xvec, units), ('y', yvec, units)],
         name='path_length_difference',
         attrs=dict(spacing=spacing, **units),
