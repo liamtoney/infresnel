@@ -65,7 +65,7 @@ Additionally, several interactive notebooks containing usage examples are
 included in [`notebooks`](notebooks). To open the notebooks, with your conda
 environment activated run
 ```
-jupyter notebook notebooks
+jupyter lab notebooks
 ```
 Alternatively, you can run these notebooks in your browser — without installing
 *infresnel* — by navigating to the project's
@@ -86,7 +86,7 @@ To cite a previous version of *infresnel*, go to the
 *infresnel*'s dependencies are [colorcet](https://colorcet.holoviz.org/) (for
 perceptually accurate colormaps to use in the creation of GeoTIFF path length difference
 grids), [Matplotlib](https://matplotlib.org/) (for applying colormaps to GeoTIFFs and
-for generally plotting results), [Jupyter Notebook](https://jupyter.org/)
+for generally plotting results), [JupyterLab](https://jupyterlab.readthedocs.io/en/latest/)
 (for running the interactive `.ipynb` notebooks), [Numba](https://numba.pydata.org/)
 (for computational acceleration), [PyGMT](https://www.pygmt.org/latest/) (for simplified
 SRTM data downloading and caching), [rioxarray](https://corteva.github.io/rioxarray/stable/)

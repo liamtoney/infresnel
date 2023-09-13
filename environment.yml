@@ -4,9 +4,10 @@ channels:
   - defaults
 dependencies:
   - colorcet
+  - ipympl
   - ipywidgets
+  - jupyterlab
   - matplotlib
-  - notebook
   - numba
   - pip
   - pygmt
