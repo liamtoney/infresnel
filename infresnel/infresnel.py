@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import pygmt
 import xarray as xr
+from joblib import Parallel, delayed
 from pyproj import Transformer
 from rasterio.enums import Resampling
 from scipy.interpolate import RectBivariateSpline
@@ -34,6 +35,7 @@ def calculate_paths(
     dem_file=None,
     full_output=False,
     return_dem=False,
+    n_jobs=1,
 ):
     """Calculate elevation profiles, direct paths, and shortest diffracted paths.
 
@@ -59,6 +61,8 @@ def calculate_paths(
             direct and shortest diffracted path lengths
         return_dem (bool): Toggle additionally returning the UTM-projected DEM used to
             compute the profiles
+        n_jobs (int): Number of parallel jobs to run (default is 1, which means no
+            parallelization) — this argument is passed on to :class:`joblib.Parallel`
 
     Returns:
         If `full_output` is `False` — an :class:`~numpy.ndarray` with shape ``(2,
@@ -159,16 +163,23 @@ def calculate_paths(
     # also must be run if the PyGMT-supplied DEM is not fully within SRTM range (kind of
     # unlikely edge case). For most PyGMT-supplied DEMs, this check will not end up
     # being run — which is good, since it can be SLOW.
-    compute_paths = np.ones(rec_xs.size).astype(bool)  # By default, compute all paths
     if check_for_valid_elevations:
         print('Checking that DEM contains source and receivers...')
         if not _check_valid_elevation_for_coords(
             dem_utm, mean_resolution, src_x, src_y
         ):
             raise ValueError('Source is not in DEM! Exiting.')
-        for i, (x, y) in enumerate(zip(rec_xs, rec_ys)):
-            if not _check_valid_elevation_for_coords(dem_utm, mean_resolution, x, y):
-                compute_paths[i] = False  # Don't compute this path
+
+        # KEY: Parallel computation of valid receiver paths
+        compute_paths = np.array(
+            Parallel(n_jobs=n_jobs)(
+                delayed(_check_valid_elevation_for_coords)(
+                    rec_x, rec_y, dem=dem_utm, tolerance=mean_resolution
+                )
+                for rec_x, rec_y in zip(rec_xs, rec_ys)
+            )
+        )
+
         n_invalid_paths = (~compute_paths).sum()
         if n_invalid_paths > 0:
             print(
@@ -176,6 +187,8 @@ def calculate_paths(
             )
         else:
             print('Done\n')
+    else:
+        compute_paths = np.full(rec_xs.size, True)  # Compute all paths
 
     # Fit bivariate spline to DEM (slow for very high resolution DEMs!)
     print('Fitting spline to DEM...')
@@ -192,20 +205,10 @@ def calculate_paths(
     print('Done\n')
 
     # Iterate over all receivers (= source-receiver pairs), calculating paths
-    if full_output:
-        output_array = np.empty(rec_xs.size, dtype=object)  # For storing Datasets
-    else:
-        output_array = np.empty((2, rec_xs.size))  # For storing path lengths
     n_valid_paths = compute_paths.sum()
     print(f'Computing {n_valid_paths} path{"" if n_valid_paths == 1 else "s"}...')
-    if n_valid_paths > 1:  # Only creating the progress bar if we have more than 1 path
-        bar = tqdm(
-            total=n_valid_paths,
-            bar_format='{percentage:3.0f}% |{bar}| {n_fmt}/{total_fmt} paths ',
-        )
-    for i, (rec_x, rec_y, compute_path) in enumerate(
-        zip(rec_xs, rec_ys, compute_paths)
-    ):
+
+    def _calculate_single_path(rec_x, rec_y, compute_path):
         # If the DEM points were valid, compute the path
         if compute_path:
             # Determine # of points in profile
@@ -263,15 +266,30 @@ def calculate_paths(
                 ),
             )
             ds.rio.write_crs(utm_crs, inplace=True)
-            output_array[i] = ds
+            output = ds
         else:
             # Just include the path lengths
-            output_array[:, i] = direct_path_len, diff_path_len
+            output = direct_path_len, diff_path_len
 
-        if n_valid_paths > 1 and compute_path:
-            bar.update()
+        return output
 
-    bar.close()
+    # Only create the progress bar if we have more than 1 path
+    iterable = zip(rec_xs, rec_ys, compute_paths)
+    if n_valid_paths > 1:
+        iterable = tqdm(
+            iterable,
+            total=n_valid_paths,
+            bar_format='{percentage:3.0f}% |{bar}| {n_fmt}/{total_fmt} paths ',
+        )
+
+    # KEY: Parallel computation of the paths themselves
+    output_array = np.array(
+        Parallel(n_jobs=n_jobs)(
+            delayed(_calculate_single_path)(rec_x, rec_y, compute_path)
+            for rec_x, rec_y, compute_path in iterable
+        )
+    ).T
+
     print('Done')
 
     # Determine what to output
