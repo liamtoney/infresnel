@@ -7,10 +7,12 @@ setup(
     packages=find_packages(),
     install_requires=[
         'colorcet',
+        'ipympl',
         'ipywidgets',
+        'jupyterlab',
         'matplotlib',
-        'notebook',
         'numba',
+        'pip',
         'pygmt',
         'rioxarray',
         'tqdm',
