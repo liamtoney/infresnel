@@ -40,6 +40,7 @@ def test_calculate_paths_grid(output=False):
         y_radius=Y_RADIUS,
         spacing=SPACING,
         dem_file=DEM_FILE,
+        n_jobs=-2,  # "...using n_jobs=-2 will result in all CPUs but one being used."
     )
     if output:
         return path_length_differences, dem
