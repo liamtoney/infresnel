@@ -302,7 +302,14 @@ def calculate_paths(
 
 
 def calculate_paths_grid(
-    src_lat, src_lon, x_radius, y_radius, spacing, dem_file=None, output_file=None
+    src_lat,
+    src_lon,
+    x_radius,
+    y_radius,
+    spacing,
+    dem_file=None,
+    output_file=None,
+    n_jobs=1,
 ):
     """Calculate paths for a UTM-projected grid surrounding a source location.
 
@@ -327,6 +334,8 @@ def calculate_paths_grid(
         output_file (str or None): If a string filepath is provided, then an RGB GeoTIFF
             file containing the colormapped grid of path length difference values is
             exported to this filepath (no export if `None`)
+        n_jobs (int): Number of parallel jobs to run (default is 1, which means no
+            parallelization) — this argument is passed on to :class:`joblib.Parallel`
 
     Returns:
         tuple:  Tuple of the form ``(path_length_differences, dem)`` where
@@ -376,6 +385,7 @@ def calculate_paths_grid(
         rec_lon=rec_lon.flatten(),
         dem_file=dem_file,
         return_dem=True,
+        n_jobs=n_jobs,
     )
     toc = time.time()
     print(f'\nElapsed time = {toc - tic:.0f} s')
