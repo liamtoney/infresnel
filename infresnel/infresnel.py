@@ -86,6 +86,9 @@ def calculate_paths(
     rec_lats = np.atleast_1d(rec_lat)
     rec_lons = np.atleast_1d(rec_lon)
 
+    # Define number of paths
+    n_paths = rec_lats.size
+
     print('Loading and projecting DEM...')
     if dem_file is not None:
         # Load user-provided DEM, first checking if it exists
@@ -183,12 +186,12 @@ def calculate_paths(
         n_invalid_paths = (~compute_paths).sum()
         if n_invalid_paths > 0:
             print(
-                f'Done — will skip {n_invalid_paths} invalid path{"" if n_invalid_paths == 1 else "s"}\n'
+                f'Done — {n_invalid_paths} invalid path{"" if n_invalid_paths == 1 else "s"} will be set to NaN\n'
             )
         else:
             print('Done\n')
     else:
-        compute_paths = np.full(rec_xs.size, True)  # Compute all paths
+        compute_paths = np.full(n_paths, True)  # Compute all paths
 
     # Fit bivariate spline to DEM (slow for very high resolution DEMs!)
     print('Fitting spline to DEM...')
@@ -204,10 +207,7 @@ def calculate_paths(
     spline = RectBivariateSpline(x=x, y=y, z=z.T)  # x and y are monotonic increasing
     print('Done\n')
 
-    # Iterate over all receivers (= source-receiver pairs), calculating paths
-    n_valid_paths = compute_paths.sum()
-    print(f'Computing {n_valid_paths} path{"" if n_valid_paths == 1 else "s"}...')
-
+    # Define fuction for calculating a single path
     def _calculate_single_path(rec_x, rec_y, compute_path):
         # If the DEM points were valid, compute the path
         if compute_path:
@@ -273,16 +273,18 @@ def calculate_paths(
 
         return output
 
+    print(f'Computing {n_paths} path{"" if n_paths == 1 else "s"}...')
+
     # Only create the progress bar if we have more than 1 path
     iterable = zip(rec_xs, rec_ys, compute_paths)
-    if n_valid_paths > 1:
+    if n_paths > 1:
         iterable = tqdm(
             iterable,
-            total=n_valid_paths,
+            total=n_paths,
             bar_format='{percentage:3.0f}% |{bar}| {n_fmt}/{total_fmt} paths ',
         )
 
-    # KEY: Parallel computation of the paths themselves
+    # KEY: Parallel path calculations over all receivers (= source-receiver pairs)
     output_array = np.array(
         Parallel(n_jobs=n_jobs)(
             delayed(_calculate_single_path)(rec_x, rec_y, compute_path)
