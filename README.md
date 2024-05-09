@@ -90,7 +90,8 @@ for generally plotting results), [JupyterLab](https://jupyterlab.readthedocs.io/
 (for running the interactive `.ipynb` notebooks), [Numba](https://numba.pydata.org/)
 (for computational acceleration), [PyGMT](https://www.pygmt.org/latest/) (for simplified
 SRTM data downloading and caching), [rioxarray](https://corteva.github.io/rioxarray/stable/)
-(for DEM file I/O, reprojection, and elevation profile interpolation), and
+(for DEM file I/O, reprojection, and elevation profile interpolation),
+[joblib](https://joblib.readthedocs.io/en/stable/) (for parallel processing), and
 [tqdm](https://tqdm.github.io/) (for displaying progress bars). These
 dependencies are listed in [`environment.yml`](environment.yml), and they are
 installed in step 2 above.
