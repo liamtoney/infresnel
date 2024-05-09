@@ -174,7 +174,7 @@ def calculate_paths(
         compute_paths = np.array(
             Parallel(n_jobs=n_jobs)(
                 delayed(_check_valid_elevation_for_coords)(
-                    rec_x, rec_y, dem=dem_utm, tolerance=mean_resolution
+                    dem_utm, mean_resolution, rec_x, rec_y
                 )
                 for rec_x, rec_y in zip(rec_xs, rec_ys)
             )
