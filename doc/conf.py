@@ -17,6 +17,7 @@ html_show_copyright = False
 
 autodoc_mock_imports = [
     'colorcet',
+    'joblib',
     'matplotlib',
     'numba',
     'numpy',
