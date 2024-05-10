@@ -17,6 +17,7 @@ html_show_copyright = False
 
 autodoc_mock_imports = [
     'colorcet',
+    'joblib',
     'matplotlib',
     'numba',
     'numpy',
@@ -33,6 +34,7 @@ napoleon_numpy_docstring = False  # We are using Google docstring style
 
 # These only need to cover the packages we reference from the docstrings
 intersphinx_mapping = {
+    'joblib': ('https://joblib.readthedocs.io/en/latest/', None),
     'numpy': ('https://numpy.org/doc/stable/', None),
     'python': ('https://docs.python.org/3/', None),
     'xarray': ('https://docs.xarray.dev/en/stable/', None),

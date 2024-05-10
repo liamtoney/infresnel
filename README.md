@@ -89,6 +89,7 @@ To cite a previous version of *infresnel*, go to the
   in the creation of GeoTIFF path length difference grids)
 * [ipympl](https://matplotlib.org/ipympl/)
 * [ipywidgets](https://ipywidgets.readthedocs.io/en/stable/)
+* [joblib](https://joblib.readthedocs.io/en/stable/) (for parallel processing)
 * [JupyterLab](https://jupyterlab.readthedocs.io/en/latest/) (for running the
   interactive `.ipynb` notebooks)
 * [Matplotlib](https://matplotlib.org/) (for applying colormaps to GeoTIFFs and for

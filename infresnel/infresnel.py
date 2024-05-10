@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import pygmt
 import xarray as xr
+from joblib import Parallel, delayed
 from pyproj import Transformer
 from rasterio.enums import Resampling
 from scipy.interpolate import RectBivariateSpline
@@ -34,6 +35,7 @@ def calculate_paths(
     dem_file=None,
     full_output=False,
     return_dem=False,
+    n_jobs=1,
 ):
     """Calculate elevation profiles, direct paths, and shortest diffracted paths.
 
@@ -59,6 +61,8 @@ def calculate_paths(
             direct and shortest diffracted path lengths
         return_dem (bool): Toggle additionally returning the UTM-projected DEM used to
             compute the profiles
+        n_jobs (int): Number of parallel jobs to run (default is 1, which means no
+            parallelization) — this argument is passed on to :class:`joblib.Parallel`
 
     Returns:
         If `full_output` is `False` — an :class:`~numpy.ndarray` with shape ``(2,
@@ -81,6 +85,9 @@ def calculate_paths(
     # Type conversion, so we can iterate
     rec_lats = np.atleast_1d(rec_lat)
     rec_lons = np.atleast_1d(rec_lon)
+
+    # Define number of paths
+    n_paths = rec_lats.size
 
     print('Loading and projecting DEM...')
     if dem_file is not None:
@@ -159,23 +166,32 @@ def calculate_paths(
     # also must be run if the PyGMT-supplied DEM is not fully within SRTM range (kind of
     # unlikely edge case). For most PyGMT-supplied DEMs, this check will not end up
     # being run — which is good, since it can be SLOW.
-    compute_paths = np.ones(rec_xs.size).astype(bool)  # By default, compute all paths
     if check_for_valid_elevations:
         print('Checking that DEM contains source and receivers...')
         if not _check_valid_elevation_for_coords(
             dem_utm, mean_resolution, src_x, src_y
         ):
             raise ValueError('Source is not in DEM! Exiting.')
-        for i, (x, y) in enumerate(zip(rec_xs, rec_ys)):
-            if not _check_valid_elevation_for_coords(dem_utm, mean_resolution, x, y):
-                compute_paths[i] = False  # Don't compute this path
+
+        # KEY: Parallel computation of valid receiver paths
+        compute_paths = np.array(
+            Parallel(n_jobs=n_jobs)(
+                delayed(_check_valid_elevation_for_coords)(
+                    dem_utm, mean_resolution, rec_x, rec_y
+                )
+                for rec_x, rec_y in zip(rec_xs, rec_ys)
+            )
+        )
+
         n_invalid_paths = (~compute_paths).sum()
         if n_invalid_paths > 0:
             print(
-                f'Done — will skip {n_invalid_paths} invalid path{"" if n_invalid_paths == 1 else "s"}\n'
+                f'Done — {n_invalid_paths} invalid path{"" if n_invalid_paths == 1 else "s"} will be set to NaN\n'
             )
         else:
             print('Done\n')
+    else:
+        compute_paths = np.full(n_paths, True)  # Compute all paths
 
     # Fit bivariate spline to DEM (slow for very high resolution DEMs!)
     print('Fitting spline to DEM...')
@@ -191,21 +207,8 @@ def calculate_paths(
     spline = RectBivariateSpline(x=x, y=y, z=z.T)  # x and y are monotonic increasing
     print('Done\n')
 
-    # Iterate over all receivers (= source-receiver pairs), calculating paths
-    if full_output:
-        output_array = np.empty(rec_xs.size, dtype=object)  # For storing Datasets
-    else:
-        output_array = np.empty((2, rec_xs.size))  # For storing path lengths
-    n_valid_paths = compute_paths.sum()
-    print(f'Computing {n_valid_paths} path{"" if n_valid_paths == 1 else "s"}...')
-    if n_valid_paths > 1:  # Only creating the progress bar if we have more than 1 path
-        bar = tqdm(
-            total=n_valid_paths,
-            bar_format='{percentage:3.0f}% |{bar}| {n_fmt}/{total_fmt} paths ',
-        )
-    for i, (rec_x, rec_y, compute_path) in enumerate(
-        zip(rec_xs, rec_ys, compute_paths)
-    ):
+    # Define fuction for calculating a single path
+    def _calculate_single_path(rec_x, rec_y, compute_path):
         # If the DEM points were valid, compute the path
         if compute_path:
             # Determine # of points in profile
@@ -263,20 +266,35 @@ def calculate_paths(
                 ),
             )
             ds.rio.write_crs(utm_crs, inplace=True)
-            output_array[i] = ds
+            output = ds  # KEY: Return a Dataset
         else:
             # Just include the path lengths
-            output_array[:, i] = direct_path_len, diff_path_len
+            output = direct_path_len, diff_path_len  # KEY: Return a tuple
 
-        if n_valid_paths > 1 and compute_path:
-            bar.update()
+        return output
 
-    bar.close()
+    print(f'Computing {n_paths} path{"" if n_paths == 1 else "s"}...')
+
+    # Only create the progress bar if we have more than 1 path
+    iterable = zip(rec_xs, rec_ys, compute_paths)
+    if n_paths > 1:
+        iterable = tqdm(
+            iterable,
+            total=n_paths,
+            bar_format='{percentage:3.0f}% |{bar}| {n_fmt}/{total_fmt} paths ',
+        )
+
+    # KEY: Parallel path calculations over all receivers (= source-receiver pairs)
+    output_array = Parallel(n_jobs=n_jobs)(
+        delayed(_calculate_single_path)(rec_x, rec_y, compute_path)
+        for rec_x, rec_y, compute_path in iterable
+    )
+
     print('Done')
 
     # Determine what to output
-    if full_output:
-        output_array = output_array.tolist()  # Convert to list of Datasets
+    if not full_output:
+        output_array = np.array(output_array).T  # Convert list of tuples to array
     if return_dem:
         return output_array, dem_utm
     else:
@@ -284,7 +302,14 @@ def calculate_paths(
 
 
 def calculate_paths_grid(
-    src_lat, src_lon, x_radius, y_radius, spacing, dem_file=None, output_file=None
+    src_lat,
+    src_lon,
+    x_radius,
+    y_radius,
+    spacing,
+    dem_file=None,
+    output_file=None,
+    n_jobs=1,
 ):
     """Calculate paths for a UTM-projected grid surrounding a source location.
 
@@ -309,6 +334,8 @@ def calculate_paths_grid(
         output_file (str or None): If a string filepath is provided, then an RGB GeoTIFF
             file containing the colormapped grid of path length difference values is
             exported to this filepath (no export if `None`)
+        n_jobs (int): Number of parallel jobs to run (default is 1, which means no
+            parallelization) — this argument is passed on to :class:`joblib.Parallel`
 
     Returns:
         tuple:  Tuple of the form ``(path_length_differences, dem)`` where
@@ -358,6 +385,7 @@ def calculate_paths_grid(
         rec_lon=rec_lon.flatten(),
         dem_file=dem_file,
         return_dem=True,
+        n_jobs=n_jobs,
     )
     toc = time.time()
     print(f'\nElapsed time = {toc - tic:.0f} s')

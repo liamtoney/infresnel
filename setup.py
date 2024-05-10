@@ -9,6 +9,7 @@ setup(
         'colorcet',
         'ipympl',
         'ipywidgets',
+        'joblib',
         'jupyterlab',
         'matplotlib',
         'numba',
