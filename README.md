@@ -83,17 +83,26 @@ To cite a previous version of *infresnel*, go to the
 
 ## Installation details
 
-*infresnel*'s dependencies are [colorcet](https://colorcet.holoviz.org/) (for
-perceptually accurate colormaps to use in the creation of GeoTIFF path length difference
-grids), [Matplotlib](https://matplotlib.org/) (for applying colormaps to GeoTIFFs and
-for generally plotting results), [JupyterLab](https://jupyterlab.readthedocs.io/en/latest/)
-(for running the interactive `.ipynb` notebooks), [Numba](https://numba.pydata.org/)
-(for computational acceleration), [PyGMT](https://www.pygmt.org/latest/) (for simplified
-SRTM data downloading and caching), [rioxarray](https://corteva.github.io/rioxarray/stable/)
-(for DEM file I/O, reprojection, and elevation profile interpolation),
-[joblib](https://joblib.readthedocs.io/en/stable/) (for parallel processing), and
-[tqdm](https://tqdm.github.io/) (for displaying progress bars). These
-dependencies are listed in [`environment.yml`](environment.yml), and they are
+*infresnel*'s dependencies are:
+
+* [colorcet](https://colorcet.holoviz.org/) (for perceptually accurate colormaps to use
+  in the creation of GeoTIFF path length difference grids)
+* [ipympl](https://matplotlib.org/ipympl/)
+* [ipywidgets](https://ipywidgets.readthedocs.io/en/stable/)
+* [joblib](https://joblib.readthedocs.io/en/stable/) (for parallel processing)
+* [JupyterLab](https://jupyterlab.readthedocs.io/en/latest/) (for running the
+  interactive `.ipynb` notebooks)
+* [Matplotlib](https://matplotlib.org/) (for applying colormaps to GeoTIFFs and for
+  generally plotting results)
+* [Numba](https://numba.pydata.org/) (for computational acceleration)
+* [pip](https://pypi.org/project/pip/)
+* [PyGMT](https://www.pygmt.org/latest/) (for simplified SRTM data downloading and
+  caching)
+* [rioxarray](https://corteva.github.io/rioxarray/stable/) (for DEM file I/O,
+  reprojection, and elevation profile interpolation)
+* [tqdm](https://tqdm.github.io/) (for displaying progress bars)
+
+These dependencies are listed in [`environment.yml`](environment.yml), and they are
 installed in step 2 above.
 
 You might want to install *infresnel* into an existing
