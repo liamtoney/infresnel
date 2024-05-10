@@ -30,6 +30,11 @@ time-domain simulations — e.g., see
 [Fig. 2B](https://www.frontiersin.org/files/Articles/620813/feart-09-620813-HTML-r1/image_m/feart-09-620813-g002.jpg)
 in Fee et al. (2021).
 
+$N$ can be used to estimate the loss of infrasound energy due to diffraction over
+topography — the "insertion loss" — via application of empirical scaling relationships.
+See Maher et al. (2021) for a thorough discussion of these various empirical
+relationships, and their limitations, in the context of volcano infrasound.
+
 These are simple equations, but the practical computation of the quantity
 $(R_\mathrm{f} - R_\mathrm{d})$ is somewhat involved. The goal of *infresnel* is to make
 this computation as quick and convenient as possible.
@@ -70,6 +75,17 @@ jupyter lab notebooks
 Alternatively, you can run these notebooks in your browser — without installing
 *infresnel* — by navigating to the project's
 [Binder](https://mybinder.org/v2/gh/liamtoney/infresnel/HEAD).
+
+## Assumptions
+
+*infresnel* calculates path length differences using elevation profiles. This means that
+**all diffraction is assumed to take place in the vertical plane between source and
+receiver.** One can easily construct scenarios where this assumption is violated. For
+example, consider a column of rock much taller than it is wide, located directly between
+source and receiver. For this scenario, *infresnel* would predict a large path length
+difference for waves traveling over the top of the column — but in reality, wavefronts
+diffract laterally around the column. The true travel time from source to receiver is
+thus much smaller than what *infresnel* predicts for this scenario.
 
 ## Citing
 
