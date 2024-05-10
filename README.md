@@ -104,9 +104,8 @@ To cite a previous version of *infresnel*, go to the
 These dependencies are listed in [`environment.yml`](environment.yml), and they are
 installed in step 2 above.
 
-You might want to install *infresnel* into an existing
-[conda](https://docs.conda.io/en/latest/) environment, instead of making a new one. In
-this case, after step 1 above run
+You might want to install *infresnel* into an existing conda environment, instead of
+making a new one. In this case, after step 1 above run
 ```
 conda activate <existing_environment>
 pip install --editable .
