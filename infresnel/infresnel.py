@@ -266,10 +266,10 @@ def calculate_paths(
                 ),
             )
             ds.rio.write_crs(utm_crs, inplace=True)
-            output = ds
+            output = ds  # KEY: Return a Dataset
         else:
             # Just include the path lengths
-            output = direct_path_len, diff_path_len
+            output = direct_path_len, diff_path_len  # KEY: Return a tuple
 
         return output
 
@@ -285,18 +285,16 @@ def calculate_paths(
         )
 
     # KEY: Parallel path calculations over all receivers (= source-receiver pairs)
-    output_array = np.array(
-        Parallel(n_jobs=n_jobs)(
-            delayed(_calculate_single_path)(rec_x, rec_y, compute_path)
-            for rec_x, rec_y, compute_path in iterable
-        )
-    ).T
+    output_array = Parallel(n_jobs=n_jobs)(
+        delayed(_calculate_single_path)(rec_x, rec_y, compute_path)
+        for rec_x, rec_y, compute_path in iterable
+    )
 
     print('Done')
 
     # Determine what to output
-    if full_output:
-        output_array = output_array.tolist()  # Convert to list of Datasets
+    if not full_output:
+        output_array = np.array(output_array).T  # Convert list of tuples to array
     if return_dem:
         return output_array, dem_utm
     else:
