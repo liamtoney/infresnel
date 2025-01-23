@@ -1,7 +1,6 @@
 name: infresnel
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - colorcet
   - ipympl
