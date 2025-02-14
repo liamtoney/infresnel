@@ -91,7 +91,7 @@ thus much smaller than what *infresnel* predicts for this scenario.
 
 If you use *infresnel* in research that leads to a published manuscript, please
 cite the tool:
-> Toney, L. (2024). *infresnel* (v0.3.0). Zenodo. https://doi.org/10.5281/zenodo.11176356
+> Toney, L. (2025). *infresnel* (v0.3.1). Zenodo. https://doi.org/10.5281/zenodo.14872984
 
 To cite a previous version of *infresnel*, go to the
 [Zenodo page](https://doi.org/10.5281/zenodo.7388645), select the version, and use the
