@@ -6,4 +6,3 @@ nbdime
 pytest
 sphinx
 sphinx-rtd-theme
-versioneer
