@@ -1,0 +1,34 @@
+[project]
+name = "infresnel"
+dynamic = ["version"]
+dependencies = [
+    "colorcet",
+    "ipympl",
+    "ipywidgets",
+    "joblib",
+    "jupyterlab",
+    "matplotlib",
+    "numba",
+    "pip",
+    "pygmt",
+    "rioxarray",
+    "tqdm",
+]
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages]
+find = {}
+
+[tool.setuptools_scm]
+local_scheme = "no-local-version"
+version_scheme = "only-version"
+
+[tool.black]
+skip-string-normalization = true
+
+[tool.isort]
+profile = "black"
+conda_env = "infresnel"

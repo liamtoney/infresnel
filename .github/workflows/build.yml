@@ -28,11 +28,12 @@ jobs:
           environment-file: environment.yml
           miniforge-version: latest
           use-mamba: true
+          conda-remove-defaults: "true"
       - name: Install development packages
         run: pip install --requirement requirements.txt
       - name: Check formatting
         run: |
-          black --skip-string-normalization --check .
-          isort --conda-env infresnel --profile black --check-only .
+          black --check .
+          isort --check-only .
       - name: Run tests
         run: pytest --capture=no
