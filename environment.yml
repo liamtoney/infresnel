@@ -12,6 +12,7 @@ dependencies:
   - pip
   - pygmt
   - rioxarray
+  - scipy
   - tqdm
   - pip:
     - --editable .
