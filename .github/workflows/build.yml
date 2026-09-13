@@ -13,6 +13,8 @@ jobs:
   install-and-test:
     name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    env:
+      GMT_DATA_SERVER: "noaa"
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
