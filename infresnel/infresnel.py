@@ -108,7 +108,9 @@ def calculate_paths(
         x_buffer = (xmax - xmin) * 0.05
         y_buffer = (ymax - ymin) * 0.05
         region = [xmin - x_buffer, xmax + x_buffer, ymin - y_buffer, ymax + y_buffer]
-        with pygmt.config(GMT_AUTO_DOWNLOAD='on', GMT_VERBOSE='e'):  # Suppress warnings
+        with pygmt.config(
+            GMT_DATA_UPDATE_INTERVAL='1d', GMT_VERBOSE='e'
+        ):  # Suppress warnings
             dem = pygmt.datasets.load_earth_relief(
                 resolution='01s', region=region, use_srtm=True
             )
